@@ -1,51 +1,55 @@
--- CREATE TABLE User (
---     u_userkey DECIMAL(10, 0) NOT NULL PRIMARY KEY,
---     u_name VARCHAR(152) NOT NULL,
---     u_email VARCHAR(152) NOT NULL,
---     u_password VARCHAR(152) NOT NULL
--- );
+CREATE TABLE User (
+    u_userkey INT NOT NULL PRIMARY KEY,
+    u_name VARCHAR(152) NOT NULL,
+    u_email VARCHAR(152) NOT NULL,
+    u_password VARCHAR(152) NOT NULL
+);
 
--- CREATE TABLE MediaWatched (
---     mw_mediaid INTEGER PRIMARY KEY,  
---     mw_userkey INTEGER NOT NULL,
---     mw_mediatype VARCHAR(252) NOT NULL,
---     mw_title VARCHAR(252) NOT NULL,
---     mw_complete BOOLEAN NOT NULL DEFAULT FALSE,
---     FOREIGN KEY (mw_userkey) REFERENCES User(u_userkey)
--- );
+CREATE TABLE MediaWatched (
+    mw_mediaid INT NOT NULL PRIMARY KEY,  
+    mw_userkey INT NOT NULL,
+    mw_mediatype VARCHAR(252) NOT NULL,
+    mw_title VARCHAR(252) NOT NULL,
+    mw_complete BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (mw_userkey) REFERENCES User(u_userkey)
+);
 
--- CREATE TABLE HabitManager (
---     hm_habitid DECIMAL(10, 0) NOT NULL PRIMARY KEY,
---     hm_userkey DECIMAL(10, 0) NOT NULL, 
---     hm_startdate DATE NOT NULL,
---     hm_enddate DATE NOT NULL,
---     hm_nonseq BOOLEAN NOT NULL DEFAULT FALSE,
---     hm_recurring BOOLEAN NOT NULL DEFAULT FALSE,
---     hm_percentcompleted DECIMAL(10, 0) DEFAULT NULL
--- );
+CREATE TABLE HabitManager (
+    hm_habitid INT NOT NULL PRIMARY KEY,
+    hm_userkey INT NOT NULL, 
+    hm_startdate DATE NOT NULL,
+    hm_enddate DATE NOT NULL,
+    hm_nonseq BOOLEAN NOT NULL DEFAULT FALSE,
+    hm_recurring BOOLEAN NOT NULL DEFAULT FALSE,
+    hm_percentcompleted DECIMAL(5, 2) DEFAULT NULL,
+    FOREIGN KEY (hm_userkey) REFERENCES User(u_userkey)
+);
 
--- CREATE TABLE HabitLog (
---     hl_logid DECIMAL(10, 0) NOT NULL PRIMARY KEY,
---     hl_habitid DECIMAL(10, 0) NOT NULL,
---     hl_log_date DATE NOT NULL,
---     hl_status BOOLEAN NOT NULL DEFAULT FALSE
--- );
+CREATE TABLE HabitLog (
+    hl_logid INT NOT NULL PRIMARY KEY,
+    hl_habitid INT NOT NULL,
+    hl_log_date DATE NOT NULL,
+    hl_status BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (hl_habitid) REFERENCES HabitManager(hm_habitid)
+);
 
--- CREATE TABLE StudyHabit (
---     sh_shhabitid DECIMAL(10, 0) NOT NULL PRIMARY KEY,
---     sh_title VARCHAR(252) NOT NULL,
---     sh_habitid DECIMAL(10, 0) NOT NULL,
---     sh_subject VARCHAR(252) NOT NULL, 
---     sh_durationmin VARCHAR(252) NOT NULL
--- );
+CREATE TABLE StudyHabit (
+    sh_shhabitid INT NOT NULL PRIMARY KEY,
+    sh_title VARCHAR(252) NOT NULL,
+    sh_habitid INT NOT NULL,
+    sh_subject VARCHAR(252) NOT NULL, 
+    sh_durationmin VARCHAR(252) NOT NULL,
+    FOREIGN KEY (sh_habitid) REFERENCES HabitManager(hm_habitid)
+);
 
--- CREATE TABLE ExerciseHabit (
---     eh_ehhabitid DECIMAL(10, 0) NOT NULL PRIMARY KEY,
---     eh_habitid DECIMAL(10, 0) NOT NULL,
---     eh_title VARCHAR(252) NOT NULL,
---     eh_activitytype VARCHAR(252) NOT NULL,
---     eh_durationmin VARCHAR(252) NOT NULL
--- );
+CREATE TABLE ExerciseHabit (
+    eh_ehhabitid INT NOT NULL PRIMARY KEY,
+    eh_habitid INT NOT NULL,
+    eh_title VARCHAR(252) NOT NULL,
+    eh_activitytype VARCHAR(252) NOT NULL,
+    eh_durationmin VARCHAR(252) NOT NULL,
+    FOREIGN KEY (eh_habitid) REFERENCES HabitManager(hm_habitid)
+);
 
 
 --User wants to update his email (UPDATE)
@@ -225,3 +229,11 @@ AND StudyHabit.sh_durationmin < 60;
 -- pull all user information
 SELECT *
 FROM User;
+
+--Sequential SQL for the User, (Non Recurring)
+-- if non Sequential = false, then add 7 
+-- if the date is passed, log for it then set it for null
+-- null, 0 , or 100 
+--if non recurring, we dont care about null
+-- if recurring we care about null, 
+
