@@ -48,13 +48,6 @@
 --     eh_durationmin VARCHAR(252) NOT NULL
 -- );
 
--- -- 
--- Successful execution of all the SQL queries and data modification statements
--- (INSERT/UPDATE/DELETE) specified in your use-case diagram. There should be at least 20
--- SQL statements and they should display diversity, i.e., there should be queries of different
--- format and modification statements of different type.
-
---finding the 
 
 --User has Rest Days for their Exercise Habit, 
 --They don’t want 7 days of logged Habit Logs? 
@@ -87,22 +80,7 @@ WHERE
     sh_durationmin > 60;
 
 --User wants to make a new Habit for study(CREATE) (seq habit)
--- CREATE TABLE StudyHabit (
---     sh_shhabitid decimal(10, 0) not null PRIMARY KEY,
---     sh_habitid decimal(10, 0) not null,
---     sh_subject varchar(252) not null, 
---     sh_durationmin varchar(252) not null
--- );
 
--- CREATE TABLE HabitManager (
---     hm_habitid decimal(10, 0) not null PRIMARY KEY,
---     hm_userkey  decimal(10,0) not null, 
---     hm_dayshabit decimal(10, 0) not null DEFAULT 7,
---     hm_startdate date not null,
---     hm_enddate date not null,
---     hm_nonseq BOOLEAN NOT NULL DEFAULT FALSE,
---     hm_recurring BOOLEAN NOT NULL DEFAULT FALSE;
--- );
 
 INSERT INTO HabitManager
 VALUES(1, 20, 3, "2024-12-08", "2024-12-14", FALSE, FALSE);
@@ -126,7 +104,7 @@ SET hm_percentcompleted = (
     WHERE HabitLog.hl_habitid = HabitManager.hm_habitid
       AND HabitLog.hl_status = TRUE
 )
-WHERE hm_userid = ? 
+WHERE hm_userid = 1
   AND hm_enddate < CURRENT_DATE;
 
 
@@ -148,23 +126,24 @@ SET hl_log_date = ?;
 --1)
 SELECT mw_title, MediaWatched.mw_complete
 FROM MediaWatched, User
-WHERE MediaWatched.mw_userkey = User.u_userkey;
+WHERE MediaWatched.mw_userkey = User.u_userkey AND
+    User.u_userkey = 1;
 
 --pull up study habit 
 
-SELECT (*)
-FROM User, HabitManager, HabitLog, ExerciseHabit
+SELECT *
+FROM User, HabitManager, HabitLog, StudyHabit
 WHERE User.u_userkey = HabitManager.hm_userkey 
 AND HabitLog.hl_habitid = HabitManager.hm_habitid
 AND HabitManager.hm_habitid = StudyHabit.sh_habitid;
 
 --pull up exercise
 
-SELECT (*)
+SELECT *
 FROM User, HabitManager, HabitLog, ExerciseHabit
 WHERE User.u_userkey = HabitManager.hm_userkey 
 AND HabitLog.hl_habitid = HabitManager.hm_habitid
-AND HabitManager.hm_habitid = ExerciseHabit.eh_ehhabitid
+AND HabitManager.hm_habitid = ExerciseHabit.eh_ehhabitid;
 
 --User wants to add add a movie/anime thing to watch so the SQL makes a an ID for the new thing and sets the bool to false(user hasn't watched it yet) (CREATE)    (Needs python)
 INSERT INTO MediaWatched (mw_userkey, mw_mediatype, mw_title) VALUES (?, ?, ?);
@@ -173,18 +152,18 @@ INSERT INTO MediaWatched (mw_userkey, mw_mediatype, mw_title) VALUES (?, ?, ?);
 
 UPDATE MediaWatched
 SET mw_complete = TRUE
-WHERE mw_mediaid = ?
+WHERE mw_mediaid = ?;
 
 --User wants to delete movie ID (DELETE) info about a specific movie is deleted
 
 DELETE FROM MediaWatched
-WHERE mw_mediaid = ?
+WHERE mw_mediaid = ?;
 
 --User misclicked on the on set to true wants to set to not seen again (UPDATE) bool set to false again
 
 UPDATE MediaWatched
 SET mw_complete = FALSE
-WHERE mw_mediaid = ?
+WHERE mw_mediaid = ?;
 
 --User wants to change schedule for non seq task (UPDATE)
 
@@ -196,7 +175,7 @@ WHERE HabitLog.hl_logid = ? --log id we're changing
 
 UPDATE HabitLog
 SET HabitLog.h1_status = TRUE
-WHERE HabitLog.hl_logid = ? 
+WHERE HabitLog.hl_logid = ? ;
 
 --User wants to see the habits with durationmins < 60 for borth. (SELECT)
 
@@ -212,4 +191,7 @@ SELECT StudyHabit.sh_title AS title, hm_percentcompleted AS percentdone
 FROM User, HabitManager, StudyHabit
 WHERE User.u_userkey = HabitManager.hm_userkey 
 AND StudyHabit.sh_habitid= HabitManager.hm_habitid
-AND StudyHabit.sh_durationmin < 60
+AND StudyHabit.sh_durationmin < 60;
+
+SELECT *
+FROM User;
