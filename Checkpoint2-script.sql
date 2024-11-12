@@ -1,12 +1,12 @@
 CREATE TABLE User (
-    u_userkey INT NOT NULL PRIMARY KEY,
+    u_userkey INTEGER PRIMARY KEY,
     u_name VARCHAR(152) NOT NULL,
     u_email VARCHAR(152) NOT NULL,
     u_password VARCHAR(152) NOT NULL
 );
 
 CREATE TABLE MediaWatched (
-    mw_mediaid INT NOT NULL PRIMARY KEY,  
+    mw_mediaid INTEGER PRIMARY KEY,  
     mw_userkey INT NOT NULL,
     mw_mediatype VARCHAR(252) NOT NULL,
     mw_title VARCHAR(252) NOT NULL,
@@ -14,8 +14,9 @@ CREATE TABLE MediaWatched (
     FOREIGN KEY (mw_userkey) REFERENCES User(u_userkey)
 );
 
+
 CREATE TABLE HabitManager (
-    hm_habitid INT NOT NULL PRIMARY KEY,
+    hm_habitid INTEGER PRIMARY KEY,
     hm_userkey INT NOT NULL, 
     hm_startdate DATE NOT NULL,
     hm_enddate DATE NOT NULL,
@@ -34,7 +35,7 @@ CREATE TABLE HabitLog (
 );
 
 CREATE TABLE StudyHabit (
-    sh_shhabitid INT NOT NULL PRIMARY KEY,
+    sh_shhabitid INTEGER PRIMARY KEY,
     sh_title VARCHAR(252) NOT NULL,
     sh_habitid INT NOT NULL,
     sh_subject VARCHAR(252) NOT NULL, 
@@ -43,7 +44,7 @@ CREATE TABLE StudyHabit (
 );
 
 CREATE TABLE ExerciseHabit (
-    eh_ehhabitid INT NOT NULL PRIMARY KEY,
+    eh_ehhabitid INTEGER PRIMARY KEY,
     eh_habitid INT NOT NULL,
     eh_title VARCHAR(252) NOT NULL,
     eh_activitytype VARCHAR(252) NOT NULL,
@@ -85,9 +86,9 @@ WHERE sh_shhabitid = 16;
 
 --User wants to make a new Habit for exercise (CREATE) (seq habit)
 INSERT INTO HabitManager
-VALUES(32, 1, "2024-12-20", "2024-12-27", "FALSE", "TRUE", 0);
+VALUES(31, 1, "2024-12-20", "2024-12-27", "FALSE", "TRUE", 0);
 INSERT INTO StudyHabit
-VALUES(16, 32, "US History" , 16, "History", 60);
+VALUES(16, "US History" , 31, "History", 60);
 
 --For habit ID that has been finalized (end date has passed)
 -- see how the user did for the a specific task (RATIO OF status/total logs SELECT)
@@ -160,7 +161,7 @@ AND HabitLog.hl_habitid = HabitManager.hm_habitid
 AND HabitManager.hm_habitid = ExerciseHabit.eh_ehhabitid;
 
 --User wants to add add a movie/anime thing to watch so the SQL makes a an ID for the new thing and sets the bool to false(user hasn't watched it yet) (CREATE)    (Needs python)
-INSERT INTO MediaWatched (mw_userkey, mw_mediatype, mw_title) VALUES (1, "Documentary", "Jeffrey Dahmer Files");
+INSERT INTO MediaWatched (mw_userkey, mw_mediatype, mw_title, mw_complete) VALUES (1, "Documentary", "Jeffrey Dahmer Files", "TRUE");
 UPDATE MediaWatched
 SET mw_complete = "TRUE"
 WHERE 
