@@ -55,7 +55,7 @@ CREATE TABLE ExerciseHabit (
 
 --User wants to update his email (UPDATE)
 UPDATE User
-SET u_email = "TestEmail@gmail.com"
+SET u_email = "MaryClark@gmail.com"
 WHERE 
     u_userkey = 20;
 
@@ -67,7 +67,7 @@ WHERE
 
 --User wants to look back on all his studyTasks
 --that have a duration higher than 60 minutes (SELECT)
-SELECT sh_subject, sh_durationmin, 
+SELECT sh_subject, sh_durationmin 
 FROM User, HabitManager, StudyHabit
 WHERE
     u_userkey = hm_userkey AND
@@ -76,19 +76,16 @@ WHERE
 
 --User wants to make a new Habit for study(CREATE) (seq habit)
 
-INSERT INTO HabitManager
-VALUES(31, 1, "2024-12-08", "2024-12-14", "FALSE", "FALSE", 0);
-INSERT INTO StudyHabit
-VALUES(16, "US History" , 16, "History", 60);
-UPDATE StudyHabit
-SET sh_habitid = 31
-WHERE sh_shhabitid = 16;
+INSERT INTO HabitManager (hm_userkey, hm_startdate, hm_enddate, hm_nonseq, hm_recurring, hm_percentcompleted)
+VALUES(1, "2024-12-08", "2024-12-14", "FALSE", "FALSE", 0);
+INSERT INTO StudyHabit (sh_title, sh_habitid, sh_subject, sh_durationmin)
+VALUES("US History" , 32, "History", 60);
 
 --User wants to make a new Habit for exercise (CREATE) (seq habit)
-INSERT INTO HabitManager
-VALUES(31, 1, "2024-12-20", "2024-12-27", "FALSE", "TRUE", 0);
-INSERT INTO StudyHabit
-VALUES(16, "US History" , 31, "History", 60);
+INSERT INTO HabitManager (hm_userkey, hm_startdate, hm_enddate, hm_nonseq, hm_recurring, hm_percentcompleted)
+VALUES(2, "2024-12-20", "2024-12-27", "FALSE", "TRUE", 0);
+INSERT INTO ExerciseHabit (eh_habitid, eh_title, eh_activitytype, eh_durationmin)
+VALUES(33, "Push Day", "Weightlifting", 60);
 
 --For habit ID that has been finalized (end date has passed)
 -- see how the user did for the a specific task (RATIO OF status/total logs SELECT)
@@ -100,14 +97,14 @@ temp_habit AS (
 )
 SELECT
     (
-        SELECT COUNT()
+        SELECT COUNT(*)
         FROM User, HabitManager, HabitLog, temp_user, temp_habit
         WHERE temp_user.user_ID = User.u_userkey
         AND User.u_userkey = HabitManager.hm_userkey
         AND HabitManager.hm_habitid = temp_habit.habit_key
         AND HabitManager.hm_habitid = HabitLog.hl_habitid
         AND HabitLog.hl_status = 'TRUE'
-    ) 100.0 / 
+    ) *100.0 / 
     (
         SELECT COUNT(*)
         FROM User, HabitManager, HabitLog, temp_user, temp_habit
@@ -161,7 +158,8 @@ AND HabitLog.hl_habitid = HabitManager.hm_habitid
 AND HabitManager.hm_habitid = ExerciseHabit.eh_ehhabitid;
 
 --User wants to add add a movie/anime thing to watch so the SQL makes a an ID for the new thing and sets the bool to false(user hasn't watched it yet) (CREATE)    (Needs python)
-INSERT INTO MediaWatched (mw_userkey, mw_mediatype, mw_title, mw_complete) VALUES (1, "Documentary", "Jeffrey Dahmer Files", "TRUE");
+INSERT INTO MediaWatched (mw_userkey, mw_mediatype, mw_title, mw_complete) 
+VALUES (1, "Documentary", "Jeffrey Dahmer Files", "TRUE");
 UPDATE MediaWatched
 SET mw_complete = "TRUE"
 WHERE 
@@ -238,3 +236,24 @@ FROM User;
 --if non recurring, we dont care about null
 -- if recurring we care about null, 
 
+-- REQUERYING SEQ
+
+-- PART 1 EXTRACT THE 
+
+INSERT INTO HabitManager (
+    hm_userkey,
+    hm_startdate,
+    hm_enddate,
+    hm_nonseq, -- will be true
+    hm_recurring
+) 
+VALUES ( ?,?,?, "TRUE", ?));
+
+--part 2 extract habit id created
+--python code to get the habit id created habit_key = cursor.lastrowid
+
+--part 3
+--there will be a loop in pyton for the amount of days
+
+INSERT INTO HabitLog (hl_habitid, hl_log_date) 
+         VALUES (?, ?)
