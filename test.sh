@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# If we need to load or delete the database ./test.sh here
 rm -f score.res
 rm -f Checkpoint2-dbase.sqlite
 touch Checkpoint2-dbase.sqlite
