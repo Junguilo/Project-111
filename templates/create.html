@@ -7,6 +7,30 @@
         <a href="/">About</a>
     </nav>
 
+    <body>
+        <h1>Add Habit</h1>
+        <form method="POST" action="/add_habit">
+            <label for="hm_userkey">User Key:</label><br>
+            <input type="number" id="hm_userkey" name="hm_userkey" required><br><br>
+            
+            <label for="hm_startdate">Start Date:</label><br>
+            <input type="date" id="hm_startdate" name="hm_startdate" required><br><br>
+            
+            <label for="hm_enddate">End Date:</label><br>
+            <input type="date" id="hm_enddate" name="hm_enddate" required><br><br>
+            
+            <label for="hm_nonseq">Non-Sequential:</label><br>
+            <input type="checkbox" id="hm_nonseq" name="hm_nonseq"><br><br>
+            
+            <label for="hm_recurring">Recurring:</label><br>
+            <input type="checkbox" id="hm_recurring" name="hm_recurring"><br><br>
+            
+            <label for="hm_percentcompleted">Percent Completed:</label><br>
+            <input type="number" step="0.01" id="hm_percentcompleted" name="hm_percentcompleted"><br><br>
+            
+            <button type="submit">Add Habit</button>
+        </form>
+    </body>
 
     <hr>
     <div class="content">

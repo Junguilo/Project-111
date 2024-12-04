@@ -50,10 +50,36 @@ def index():
 
     return render_template('index.html', posts = sql)
 
-@app.route('/create', methods=('GET', 'POST'))
+#redirects to the create page
+@app.route('/create')
 def create():
-
     return render_template('create.html')
+
+#Only works if the user key is in our db
+@app.route('/add_habit', methods=['GET', 'POST'])
+def add_habit():
+    if request.method == 'POST':
+        hm_userkey = request.form['hm_userkey']
+        hm_startdate = request.form['hm_startdate']
+        hm_enddate = request.form['hm_enddate']
+        hm_nonseq = request.form.get('hm_nonseq') == 'on' 
+        hm_recurring = request.form.get('hm_recurring') == 'on'  
+        hm_percentcompleted = request.form.get('hm_percentcompleted') or None
+        
+        conn = openConnection(db)
+
+        conn.execute('''
+            INSERT INTO HabitManager (
+                hm_userkey, hm_startdate, hm_enddate, hm_nonseq, hm_recurring, hm_percentcompleted
+            ) VALUES (?, ?, ?, ?, ?, ?)
+        ''', (hm_userkey, hm_startdate, hm_enddate, hm_nonseq, hm_recurring, hm_percentcompleted))
+        conn.commit()
+
+
+        conn.close()
+    
+    return render_template('create.html')
+
 
 if __name__ == "__main__":
     app.run(debug=True)
