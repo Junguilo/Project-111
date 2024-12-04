@@ -5,6 +5,12 @@
     <nav>
         <a href="#">FlaskApp</a>
         <a href="/create">Create Test</a>
+        {% if 'username' in session%}
+            <a href="#">Profile </a>
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/login">Login/Register</a>
+        {% endif %}
     </nav>
 
 

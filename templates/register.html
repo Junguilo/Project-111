@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <nav>
+        <a href="#">FlaskApp</a>
+        <a href="/create">Create Test</a>
+        <a href="/login">Login</a>
+    </nav>
+
+    <title>Register</title>
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+    <form method="post">
+        Username: <input type="text" name="username"><br>
+        Email: <input type="text" name="email"><br>
+        Password: <input type="password" name="password"><br>
+        <input type="submit" value="Register">
+    </form>
+    
+
+    <hr>
+    <div class="content">
+    </div>
+</body>
+</html>

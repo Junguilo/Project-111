@@ -1,4 +1,4 @@
-from flask import Flask, url_for, redirect, jsonify, request, render_template # Create our server, as well as sending/reading JSON
+from flask import Flask, session, url_for, redirect, jsonify, request, render_template # Create our server, as well as sending/reading JSON
 import sqlite3 
 #Using sqlite3 is a problem if we were to have more than 100 users use it at the same time
 #If we want to have a better system flask_alchemy is leagues better, but sqlite3 is familiar
@@ -22,19 +22,6 @@ def openConnection(_dbFile):
     print("++++++++++++++++++++++++++++++++++")
 
     return conn
-
-
-def closeConnection(_conn, _dbFile):
-    print("++++++++++++++++++++++++++++++++++")
-    print("Close database: ", _dbFile)
-
-    try:
-        _conn.close()
-        print("success")
-    except Error as e:
-        print(e)
-
-    print("++++++++++++++++++++++++++++++++++")
 
 ## Flask Functions
 @app.route('/')
@@ -79,6 +66,67 @@ def add_habit():
         conn.close()
     
     return render_template('create.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = openConnection(db)
+        
+        try:
+            conn.execute('''
+                INSERT INTO User(u_name, u_email, u_password)
+                         VALUES (?, ?, ?)
+            ''', (username, email, password))
+            conn.commit()
+            message = "Successfully Registered"
+        except sqlite3.IntegrityError:
+            message = 'User already exists'
+        finally:
+            conn.close()
+        
+        return render_template('register.html', message = message)
+    return render_template('register.html')
+    
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        conn = openConnection(db)
+        c = conn.cursor()
+        c.execute('''
+            SELECT * 
+            FROM User
+            WHERE 
+                u_name = ? AND 
+                u_password = ?
+        ''', (username, password))
+        user = c.fetchone()
+        conn.close()
+        
+        print(user)
+        if user:
+            session['username'] = username
+            print('User logged in:', session['username'])  # Debugging line
+            return redirect(url_for('index'))
+        else:
+            error = 'Invalid user or password'
+    return render_template('login.html', error = error)
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
+
 
 
 if __name__ == "__main__":
