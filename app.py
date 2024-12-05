@@ -37,7 +37,7 @@ def index():
 
     return render_template('index.html', posts = sql)
 
-#redirects to the create page
+#redirects to the create habit page
 @app.route('/create')
 def create():
     return render_template('create.html')
@@ -68,7 +68,34 @@ def add_habit():
     return render_template('create.html')
 
 
+# User Profile
+#listing their information, 
+#movies they like, name, email, etc, can add more later
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    user = None
+    if session['username']:
+        print(session['username'])
+        user = session['username']
+        id = session['userID']
 
+        conn = openConnection(db)
+        c = conn.cursor()
+        c.execute('''
+            SELECT * 
+            FROM User
+            WHERE 
+                u_userkey = ?
+        ''', (id, )) #if you're using only 1 param, add a comma to the end for some reason
+        user = c.fetchall()
+        conn.close()
+
+        #print(user)
+        return render_template('profile.html', user=user)
+    else:
+        return render_template('profile.html', user = None)
+
+## User Registration & Login
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -111,12 +138,15 @@ def login():
                 u_password = ?
         ''', (username, password))
         user = c.fetchone()
+
+
         conn.close()
         
         print(user)
         if user:
             session['username'] = username
-            print('User logged in:', session['username'])  # Debugging line
+            session['userID'] = user[0]
+            print('User logged in:', session['username'], 'User ID:', session['userID'])
             return redirect(url_for('index'))
         else:
             error = 'Invalid user or password'
@@ -125,6 +155,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
+    session.pop('userID', None)
     return redirect(url_for('index'))
 
 

@@ -3,10 +3,15 @@
 
 <body>
     <nav>
-        <a href="/">FlaskApp</a>
-        <a href="/profile">About</a>
+        <a href="/">Home</a>
+        <a href="/create">Create Habit</a>
+        {% if 'username' in session%}
+            <a href="/profile">Profile </a>
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/login">Login/Register</a>
+        {% endif %}
     </nav>
-
     <body>
         <h1>Add Habit</h1>
         <form method="POST" action="/add_habit">

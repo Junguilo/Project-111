@@ -3,10 +3,10 @@
 
 <body>
     <nav>
-        <a href="/">FlaskApp</a>
-        <a href="/create">Create Test</a>
+        <a href="/">Home</a>
+        <a href="/create">Create Habit</a>
         {% if 'username' in session%}
-            <a href="#">Profile </a>
+            <a href="/profile">Profile </a>
             <a href="/logout">Logout</a>
         {% else %}
             <a href="/login">Login/Register</a>
