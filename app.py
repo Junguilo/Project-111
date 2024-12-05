@@ -67,6 +67,8 @@ def add_habit():
     
     return render_template('create.html')
 
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -91,8 +93,6 @@ def register():
         return render_template('register.html', message = message)
     return render_template('register.html')
     
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
