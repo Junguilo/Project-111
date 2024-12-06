@@ -21,7 +21,17 @@
         </div>
     {% endfor%}
     <hr>
-    <!-- Being able to add Movies later!!!!! -->
+
+    <h1>Movies in List</h1>
+
+    {% for item in movies%}
+    <div>
+        <!-- <p>{{ item }}</p> --> 
+        <p>Movie: <strong>{{ item[0] }}</strong></p>
+        <p> Completed?: {{ item[1] }}</p>
+    </div>
+    {% endfor%}
+    <!-- Being able to add Movie IMAGES LATER -->
     <div class="content">
     </div>
 </body>

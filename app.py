@@ -7,6 +7,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super_secret_key'
 db = r"Checkpoint2-dbase.sqlite"
 
+# User: John Smith
+# Pass: password1
+# to test out the website 
+
 ## db Functions
 def openConnection(_dbFile):
     print("++++++++++++++++++++++++++++++++++")
@@ -52,8 +56,8 @@ def index():
                 AND hm_userkey = ?
         ''', (id, )).fetchall()
     conn.close()
-    print(study)
-    print(exercise)
+    # print(study)
+    # print(exercise)
 
 
     return render_template('index.html', studyHabits = study, exerciseHabits = exercise)
@@ -64,15 +68,23 @@ def create():
     return render_template('create.html')
 
 #Only works if the user key is in our db
-@app.route('/add_habit', methods=['GET', 'POST'])
-def add_habit():
+#We gotta add like two different functions of the same function cause idk how to grab specific items
+@app.route('/add_exercisehabit', methods=['GET', 'POST'])
+def add_exercisehabit():
     if request.method == 'POST' and session['username']:
+        #get habit manager items
         hm_userkey = session['userID']
-        hm_startdate = request.form['hm_startdate']
-        hm_enddate = request.form['hm_enddate']
-        hm_nonseq = request.form.get('hm_nonseq') == 'on' 
-        hm_recurring = request.form.get('hm_recurring') == 'on'  
+        hm_startdate = request.form['hm_exercise_startdate']
+        hm_enddate = request.form['hm_exercise_enddate']
+        hm_nonseq = request.form.get('hm_exercise_nonseq') == 'on' 
+        hm_recurring = request.form.get('hm_exercise_recurring') == 'on'  
         hm_percentcompleted = 0
+
+        #get exercisehabit items
+        title = request.form['eh_title']
+        description = request.form['eh_description']
+        activity = request.form['eh_activitytype']
+        duration = request.form['eh_durationmin']
         
         #hardcode the shit out of those booleans
         if hm_nonseq == '0':
@@ -86,6 +98,8 @@ def add_habit():
             hm_recurring = 'TRUE'
 
         conn = openConnection(db)
+
+        #input into the habitManager
         conn.execute('''
             INSERT INTO HabitManager (
                 hm_userkey, hm_startdate, hm_enddate, hm_nonseq, hm_recurring, hm_percentcompleted
@@ -93,11 +107,90 @@ def add_habit():
         ''', (hm_userkey, hm_startdate, hm_enddate, hm_nonseq, hm_recurring, hm_percentcompleted))
         conn.commit()
 
+        #Grabbing the HM key in order to connect these two together
+        #taking the most recent activity with the information we have 
+        c = conn.cursor()
+        c.execute('''
+            SELECT *
+            FROM HabitManager
+            ORDER BY hm_habitid DESC
+            LIMIT 1
+        ''')
+        recentHabit = c.fetchall()
+        hmID = recentHabit[0][0]
 
+        #input into the exercisehabit
+        conn.execute('''
+            INSERT INTO ExerciseHabit (
+                      eh_habitid, eh_title, eh_activitytype, eh_durationmin, eh_description   
+            ) VALUES (?, ?, ?, ?, ?)
+        ''', (hmID, title, activity, duration, description))
+        conn.commit()
+
+        
         conn.close()
     
     return render_template('create.html')
 
+@app.route('/add_studyhabit', methods=['GET', 'POST'])
+def add_studyhabit():
+    if request.method == 'POST' and session['username']:
+        hm_userkey = session['userID']
+        hm_startdate = request.form['hm_study_startdate']
+        hm_enddate = request.form['hm_study_enddate']
+        hm_nonseq = request.form.get('hm_study_nonseq') == 'on' 
+        hm_recurring = request.form.get('hm_study_recurring') == 'on'  
+        hm_percentcompleted = 0
+
+        #Get studyhabit items
+        title = request.form['sh_title']
+        description = request.form['sh_description']
+        subject = request.form['sh_subject']
+        duration = request.form['sh_durationmin']
+
+        #hardcode the shit out of those booleans
+        if hm_nonseq == '0':
+            hm_nonseq = 'FALSE'
+        else:
+            hm_nonseq = 'TRUE'
+
+        if hm_recurring == '0':
+            hm_recurring = 'FALSE'
+        else:
+            hm_recurring = 'TRUE'
+
+        conn = openConnection(db)
+
+        #input into the habitManager
+        conn.execute('''
+            INSERT INTO HabitManager (
+                hm_userkey, hm_startdate, hm_enddate, hm_nonseq, hm_recurring, hm_percentcompleted
+            ) VALUES (?, ?, ?, ?, ?, ?)
+        ''', (hm_userkey, hm_startdate, hm_enddate, hm_nonseq, hm_recurring, hm_percentcompleted))
+        conn.commit()
+
+        #Grabbing the HM key in order to connect these two together
+        #taking the most recent activity with the information we have 
+        c = conn.cursor()
+        c.execute('''
+            SELECT *
+            FROM HabitManager
+            ORDER BY hm_habitid DESC
+            LIMIT 1
+        ''')
+        recentHabit = c.fetchall()
+        hmID = recentHabit[0][0]
+
+        #input into the exercisehabit
+        conn.execute('''
+            INSERT INTO StudyHabit (
+                      sh_title, sh_habitid, sh_subject, sh_durationmin, sh_description   
+            ) VALUES (?, ?, ?, ?, ?)
+        ''', (title, hmID, subject, duration, description))
+        conn.commit()
+        conn.close()
+    
+    return render_template('create.html')
 
 # User Profile
 #listing their information, 
@@ -105,6 +198,7 @@ def add_habit():
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     user = None
+    movies = None
     if session['username']:
         print(session['username'])
         user = session['username']
@@ -119,12 +213,23 @@ def profile():
                 u_userkey = ?
         ''', (id, )) #if you're using only 1 param, add a comma to the end for some reason
         user = c.fetchall()
+
+        c.execute('''
+                 SELECT mw_title, MediaWatched.mw_complete
+                 FROM MediaWatched, User
+                 WHERE MediaWatched.mw_userkey = User.u_userkey AND
+                     User.u_userkey = ?
+        ''', (id, ))
+
+        movies = c.fetchall()
+
+
         conn.close()
 
         #print(user)
-        return render_template('profile.html', user=user)
+        return render_template('profile.html', user=user, movies = movies)
     else:
-        return render_template('profile.html', user = None)
+        return render_template('profile.html', user = None, movies = None)
 
 ## User Registration & Login
 @app.route('/register', methods=['GET', 'POST'])

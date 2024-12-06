@@ -52,6 +52,12 @@ CREATE TABLE ExerciseHabit (
     FOREIGN KEY (eh_habitid) REFERENCES HabitManager(hm_habitid)
 );
 
+--create descriptions for studyhabit & exercisehabit
+ALTER TABLE StudyHabit
+ADD sh_description VARCHAR(252);
+
+ALTER TABLE ExerciseHabit
+ADD eh_description VARCHAR(252);
 
 -- --User wants to update his email (UPDATE)
 -- UPDATE User
