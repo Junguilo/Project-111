@@ -31,14 +31,33 @@ def openConnection(_dbFile):
 @app.route('/')
 def index():
     conn = openConnection(db)
-    study = None
-    exercise = None
+    studyHabits = None
+    exerciseHabits = None
+    loggedStudy = None
+    loggedExercise = None
 
     #Check if we are logged in 
     if 'username' in session:
-        #Grab both exercise habits & Study habits that the user has done
         id = session['userID']
-        study = conn.execute('''
+        #Grab the SINGULAR habits that the user has created 
+        studyHabits = conn.execute('''
+            SELECT sh_title, sh_description, sh_subject, hm_startdate, hm_enddate, sh_durationmin, hm_nonseq, hm_recurring
+            FROM User, HabitManager, StudyHabit
+            WHERE User.u_userkey = HabitManager.hm_userkey 
+            AND HabitManager.hm_habitid = StudyHabit.sh_habitid
+            AND hm_userkey = ?
+        ''', (id, )).fetchall()
+
+        exerciseHabits = conn.execute('''
+            SELECT eh_title, eh_description, eh_activitytype, hm_startdate, hm_enddate, eh_durationmin, hm_nonseq, hm_recurring
+            FROM User, HabitManager, ExerciseHabit
+            WHERE User.u_userkey = HabitManager.hm_userkey 
+            AND HabitManager.hm_habitid = ExerciseHabit.eh_habitid
+            AND hm_userkey = ?
+        ''', (id, )).fetchall()
+
+        #Grab both exercise habits & Study LOGGED habits that the user has done
+        loggedStudy = conn.execute('''
                 SELECT sh_title, sh_subject, hm_startdate, hm_enddate,hl_log_date, sh_durationmin, hm_nonseq, hm_recurring
                 FROM User, HabitManager, HabitLog, StudyHabit
                 WHERE User.u_userkey = HabitManager.hm_userkey 
@@ -47,20 +66,20 @@ def index():
                 AND hm_userkey = ?
         ''', (id, )).fetchall()
 
-        exercise = conn.execute('''
-                SELECT eh_title, eh_activitytype, hm_startdate, hm_enddate,hl_log_date, eh_durationmin, hm_nonseq, hm_recurring
-                FROM User, HabitManager, HabitLog, ExerciseHabit
-                WHERE User.u_userkey = HabitManager.hm_userkey 
-                AND HabitLog.hl_habitid = HabitManager.hm_habitid
-                AND HabitManager.hm_habitid = ExerciseHabit.eh_ehhabitid
-                AND hm_userkey = ?
+        loggedExercise = conn.execute('''
+            SELECT eh_title, eh_activitytype, hm_startdate, hm_enddate,hl_log_date, eh_durationmin, hm_nonseq, hm_recurring
+            FROM User, HabitManager, HabitLog, ExerciseHabit
+            WHERE User.u_userkey = HabitManager.hm_userkey 
+            AND HabitLog.hl_habitid = HabitManager.hm_habitid
+            AND HabitManager.hm_habitid = ExerciseHabit.eh_habitid
+            AND hm_userkey = ?
         ''', (id, )).fetchall()
     conn.close()
     # print(study)
     # print(exercise)
 
 
-    return render_template('index.html', studyHabits = study, exerciseHabits = exercise)
+    return render_template('index.html', studyHabits = studyHabits, exerciseHabits = exerciseHabits ,studyLoggedHabits = loggedStudy, exerciseLoggedHabits = loggedExercise)
 
 #redirects to the create habit page
 @app.route('/create')

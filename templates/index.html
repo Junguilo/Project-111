@@ -14,15 +14,33 @@
     </nav>
 
     {% if 'username' in session %}
-        <h1>Your Study Habits</h1>
+        <h1>Habits Created</h1>
+        <!-- Needs a habitlog function later to create specific logged habits -->
+        <h2>Your Study Habits</h2>
         {% for post in studyHabits %}
             <div class='post'>
                 <p>{{ post }}</p>
             </div>
         {% endfor %}
 
-        <h1>Your Exercise Habits</h1>
+        <h2>Your Exercise Habits</h2>
         {% for post in exerciseHabits %}
+            <div class='post'>
+                <p>{{ post }}</p>
+            </div>
+        {% endfor %}
+
+
+        <h1>Your Logged Habits</h1>
+        <h2>Your Logged Study  Habits</h2>
+        {% for post in studyLoggedHabits %}
+            <div class='post'>
+                <p>{{ post }}</p>
+            </div>
+        {% endfor %}
+
+        <h2>Your Logged Exercise Habits</h2>
+        {% for post in exerciseLoggedHabits %}
             <div class='post'>
                 <p>{{ post }}</p>
             </div>
