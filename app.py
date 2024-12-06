@@ -5,7 +5,7 @@ import sqlite3
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super_secret_key'
-db = database = r"Checkpoint2-dbase.sqlite"
+db = r"Checkpoint2-dbase.sqlite"
 
 ## db Functions
 def openConnection(_dbFile):
@@ -27,15 +27,36 @@ def openConnection(_dbFile):
 @app.route('/')
 def index():
     conn = openConnection(db)
-    
-    sql = conn.execute('''
-            SELECT *
-            FROM ExerciseHabit
-    ''').fetchall()
-    
-    conn.close()
+    study = None
+    exercise = None
 
-    return render_template('index.html', posts = sql)
+    #Check if we are logged in 
+    if 'username' in session:
+        #Grab both exercise habits & Study habits that the user has done
+        id = session['userID']
+        study = conn.execute('''
+                SELECT sh_title, sh_subject, hm_startdate, hm_enddate,hl_log_date, sh_durationmin, hm_nonseq, hm_recurring
+                FROM User, HabitManager, HabitLog, StudyHabit
+                WHERE User.u_userkey = HabitManager.hm_userkey 
+                AND HabitLog.hl_habitid = HabitManager.hm_habitid
+                AND HabitManager.hm_habitid = StudyHabit.sh_habitid
+                AND hm_userkey = ?
+        ''', (id, )).fetchall()
+
+        exercise = conn.execute('''
+                SELECT eh_title, eh_activitytype, hm_startdate, hm_enddate,hl_log_date, eh_durationmin, hm_nonseq, hm_recurring
+                FROM User, HabitManager, HabitLog, ExerciseHabit
+                WHERE User.u_userkey = HabitManager.hm_userkey 
+                AND HabitLog.hl_habitid = HabitManager.hm_habitid
+                AND HabitManager.hm_habitid = ExerciseHabit.eh_ehhabitid
+                AND hm_userkey = ?
+        ''', (id, )).fetchall()
+    conn.close()
+    print(study)
+    print(exercise)
+
+
+    return render_template('index.html', studyHabits = study, exerciseHabits = exercise)
 
 #redirects to the create habit page
 @app.route('/create')
@@ -45,16 +66,26 @@ def create():
 #Only works if the user key is in our db
 @app.route('/add_habit', methods=['GET', 'POST'])
 def add_habit():
-    if request.method == 'POST':
-        hm_userkey = request.form['hm_userkey']
+    if request.method == 'POST' and session['username']:
+        hm_userkey = session['userID']
         hm_startdate = request.form['hm_startdate']
         hm_enddate = request.form['hm_enddate']
         hm_nonseq = request.form.get('hm_nonseq') == 'on' 
         hm_recurring = request.form.get('hm_recurring') == 'on'  
-        hm_percentcompleted = request.form.get('hm_percentcompleted') or None
+        hm_percentcompleted = 0
         
-        conn = openConnection(db)
+        #hardcode the shit out of those booleans
+        if hm_nonseq == '0':
+            hm_nonseq = 'FALSE'
+        else:
+            hm_nonseq = 'TRUE'
 
+        if hm_recurring == '0':
+            hm_recurring = 'FALSE'
+        else:
+            hm_recurring = 'TRUE'
+
+        conn = openConnection(db)
         conn.execute('''
             INSERT INTO HabitManager (
                 hm_userkey, hm_startdate, hm_enddate, hm_nonseq, hm_recurring, hm_percentcompleted
@@ -98,6 +129,7 @@ def profile():
 ## User Registration & Login
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    message = None
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
@@ -105,17 +137,25 @@ def register():
 
         conn = openConnection(db)
         
-        try:
+        ##used to check if theres an existing user
+        user = conn.execute('''
+                    SELECT *
+                    FROM User
+                    WHERE
+                        u_name = ?
+                    ''', (username,)).fetchall()
+        
+        if user == []: #If we can't find any users with the same name, add to db
             conn.execute('''
                 INSERT INTO User(u_name, u_email, u_password)
-                         VALUES (?, ?, ?)
+                            VALUES (?, ?, ?)
             ''', (username, email, password))
             conn.commit()
             message = "Successfully Registered"
-        except sqlite3.IntegrityError:
-            message = 'User already exists'
-        finally:
-            conn.close()
+        else:
+            message = "Username already exists!!"
+
+        conn.close()
         
         return render_template('register.html', message = message)
     return render_template('register.html')

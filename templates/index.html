@@ -4,8 +4,8 @@
 <body>
     <nav>
         <a href="/">Home</a>
-        <a href="/create">Create Habit</a>
         {% if 'username' in session%}
+            <a href="/create">Create Habit</a>
             <a href="/profile">Profile </a>
             <a href="/logout">Logout</a>
         {% else %}
@@ -13,13 +13,25 @@
         {% endif %}
     </nav>
 
+    {% if 'username' in session %}
+        <h1>Your Study Habits</h1>
+        {% for post in studyHabits %}
+            <div class='post'>
+                <p>{{ post }}</p>
+            </div>
+        {% endfor %}
 
-    {% for post in posts %}
-        <div class='post'>
-            <p>{{ post }}</p>
+        <h1>Your Exercise Habits</h1>
+        {% for post in exerciseHabits %}
+            <div class='post'>
+                <p>{{ post }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div>
+            <p> Please Login to view Habits </p>
         </div>
-    {% endfor %}
-
+    {% endif %}
     <hr>
     <div class="content">
     </div>

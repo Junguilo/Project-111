@@ -4,8 +4,8 @@
 <body>
     <nav>
         <a href="/">Home</a>
-        <a href="/create">Create Habit</a>
         {% if 'username' in session%}
+            <a href="/create">Create Habit</a>
             <a href="/profile">Profile </a>
             <a href="/logout">Logout</a>
         {% else %}
@@ -15,12 +15,13 @@
 
     {% for item in user%}
         <div>
-            <p>{{ item }}</p>
+            <!-- <p>{{ item }}</p> --> 
             <p>User: {{ item[1] }}</p>
             <p>Email: {{ item[2] }}</p>
         </div>
     {% endfor%}
     <hr>
+    <!-- Being able to add Movies later!!!!! -->
     <div class="content">
     </div>
 </body>
