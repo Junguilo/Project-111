@@ -14,19 +14,19 @@
     </nav>
 
     {% if 'username' in session %}
-        <h1>Habits Created</h1>
+        <h1>Habits Created <button type="submit">Log Habits(Does not work yet)</button></h1>
         <!-- Needs a habitlog function later to create specific logged habits -->
         <h2>Your Study Habits</h2>
         {% for post in studyHabits %}
             <div class='post'>
-                <p>{{ post }}</p>
+                <p><input type="checkbox" id="#" name="#">{{ post }}</p>
             </div>
         {% endfor %}
 
         <h2>Your Exercise Habits</h2>
         {% for post in exerciseHabits %}
             <div class='post'>
-                <p>{{ post }}</p>
+                <p><input type="checkbox" id="#" name="#">{{ post }}</p>
             </div>
         {% endfor %}
 
