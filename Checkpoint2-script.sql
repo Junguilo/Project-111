@@ -26,8 +26,9 @@ CREATE TABLE HabitManager (
     FOREIGN KEY (hm_userkey) REFERENCES User(u_userkey)
 );
 
+DROP TABLE HabitLog;
 CREATE TABLE HabitLog (
-    hl_logid INT NOT NULL PRIMARY KEY,
+    hl_logid INTEGER PRIMARY KEY,
     hl_habitid INT NOT NULL,
     hl_log_date DATE NOT NULL,
     hl_status BOOLEAN NOT NULL DEFAULT FALSE,
@@ -58,6 +59,9 @@ ADD sh_description VARCHAR(252);
 
 ALTER TABLE ExerciseHabit
 ADD eh_description VARCHAR(252);
+
+ALTER TABLE HabitLog
+ALTER COLUMN hl_logid INTEGER PRIMARY KEY;
 
 -- --User wants to update his email (UPDATE)
 -- UPDATE User

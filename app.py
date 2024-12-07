@@ -1,11 +1,13 @@
 from flask import Flask, session, url_for, redirect, jsonify, request, render_template # Create our server, as well as sending/reading JSON
 import sqlite3 
+from datetime import date
 #Using sqlite3 is a problem if we were to have more than 100 users use it at the same time
 #If we want to have a better system flask_alchemy is leagues better, but sqlite3 is familiar
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super_secret_key'
 db = r"Checkpoint2-dbase.sqlite"
+today = date.today()
 
 # User: John Smith
 # Pass: password1
@@ -35,13 +37,15 @@ def index():
     exerciseHabits = None
     loggedStudy = None
     loggedExercise = None
+    date = today.isoformat()
 
     #Check if we are logged in 
     if 'username' in session:
+        date = session['date']
         id = session['userID']
         #Grab the SINGULAR habits that the user has created 
         studyHabits = conn.execute('''
-            SELECT sh_title, sh_description, sh_subject, hm_startdate, hm_enddate, sh_durationmin, hm_nonseq, hm_recurring
+            SELECT hm_habitid, sh_title, sh_description, sh_subject, hm_startdate, hm_enddate, sh_durationmin, hm_nonseq, hm_recurring
             FROM User, HabitManager, StudyHabit
             WHERE User.u_userkey = HabitManager.hm_userkey 
             AND HabitManager.hm_habitid = StudyHabit.sh_habitid
@@ -49,7 +53,7 @@ def index():
         ''', (id, )).fetchall()
 
         exerciseHabits = conn.execute('''
-            SELECT eh_title, eh_description, eh_activitytype, hm_startdate, hm_enddate, eh_durationmin, hm_nonseq, hm_recurring
+            SELECT hm_habitid, eh_title, eh_description, eh_activitytype, hm_startdate, hm_enddate, eh_durationmin, hm_nonseq, hm_recurring
             FROM User, HabitManager, ExerciseHabit
             WHERE User.u_userkey = HabitManager.hm_userkey 
             AND HabitManager.hm_habitid = ExerciseHabit.eh_habitid
@@ -77,9 +81,53 @@ def index():
     conn.close()
     # print(study)
     # print(exercise)
+    
 
+    return render_template('index.html', date = date, studyHabits = studyHabits, exerciseHabits = exerciseHabits ,studyLoggedHabits = loggedStudy, exerciseLoggedHabits = loggedExercise)
 
-    return render_template('index.html', studyHabits = studyHabits, exerciseHabits = exerciseHabits ,studyLoggedHabits = loggedStudy, exerciseLoggedHabits = loggedExercise)
+#We NEED a date changer in order to test out needed functions
+@app.route('/changeDate', methods=['GET', 'POST'])
+def changeDate():
+    if request.method == 'POST':
+        date = request.form['date']
+        if date == "":
+            session['date'] = today.isoformat()
+        else:
+            session['date'] = date
+        #print(date)        
+        #print(session['date'])
+        return redirect(url_for('index'))
+
+#we can log specific habits that we can click the checkmark
+#This grabs specific habitIDs to log into the specific date
+@app.route('/logHabit', methods=['GET', 'POST'])
+def logHabit():
+    if request.method == 'POST':
+        checkedStudy = request.form.getlist('studyHabits')
+        checkedExercise = request.form.getlist('exerciseHabits')
+
+        conn = openConnection(db)
+        
+        #insert habitid shit into the habitlog with our current date
+        for i in checkedStudy:
+            conn.execute('''
+                INSERT INTO HabitLog (hl_habitid, hl_log_date, hl_status)
+                        VALUES(?, ?, ?)
+            ''', (i, session['date'], "FALSE"))
+                
+
+        for j in checkedExercise:
+            conn.execute('''
+                INSERT INTO HabitLog (hl_habitid, hl_log_date, hl_status)
+                        VALUES(?, ?, ?)
+            ''', (j, session['date'], "FALSE"))
+                
+        conn.commit()
+        conn.close()
+        print("Study: ", checkedStudy)
+        print("Exercise:", checkedExercise)
+        return redirect(url_for('index'))
+
 
 #redirects to the create habit page
 @app.route('/create')
@@ -310,6 +358,8 @@ def login():
         if user:
             session['username'] = username
             session['userID'] = user[0]
+            session['date'] = today.isoformat() #HARD CODED WAY OF STORING THE DATE IN THE SESSION
+            
             print('User logged in:', session['username'], 'User ID:', session['userID'])
             return redirect(url_for('index'))
         else:
@@ -320,6 +370,8 @@ def login():
 def logout():
     session.pop('username', None)
     session.pop('userID', None)
+    #reset date to current date
+    session['date'] = today.isoformat()
     return redirect(url_for('index'))
 
 

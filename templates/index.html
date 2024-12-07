@@ -8,28 +8,33 @@
             <a href="/create">Create Habit</a>
             <a href="/profile">Profile </a>
             <a href="/logout">Logout</a>
+            <p>DEBUG: DATE: {{date}}
+            <form method="POST" action="/changeDate">
+                    <input type="date" id="date" name="date">
+                    <button type="submit">Change Date</button>
+            </form></p>
         {% else %}
             <a href="/login">Login/Register</a>
         {% endif %}
     </nav>
-
     {% if 'username' in session %}
-        <h1>Habits Created <button type="submit">Log Habits(Does not work yet)</button></h1>
-        <!-- Needs a habitlog function later to create specific logged habits -->
-        <h2>Your Study Habits</h2>
-        {% for post in studyHabits %}
-            <div class='post'>
-                <p><input type="checkbox" id="#" name="#">{{ post }}</p>
-            </div>
-        {% endfor %}
+        <form method = "POST" action="/logHabit">
+            <h1>Habits Created <button type="submit">Log Habits(Does not work yet)</button></h1>
+            <!-- Needs a habitlog function later to create specific logged habits -->
+            <h2>Your Study Habits</h2>
+            {% for post in studyHabits %}
+                <div class='post'>
+                    <p><input type="checkbox" id="#" name="studyHabits" value = {{post[0]}}>{{ post }}</p>
+                </div>
+            {% endfor %}
 
-        <h2>Your Exercise Habits</h2>
-        {% for post in exerciseHabits %}
-            <div class='post'>
-                <p><input type="checkbox" id="#" name="#">{{ post }}</p>
-            </div>
-        {% endfor %}
-
+            <h2>Your Exercise Habits</h2>
+            {% for post in exerciseHabits %}
+                <div class='post'>
+                    <p><input type="checkbox" id="#" name="exerciseHabits" value = {{post[0]}}>{{ post }}</p>
+                </div>
+            {% endfor %}
+        </form>
 
         <h1>Your Logged Habits</h1>
         <h2>Your Logged Study  Habits</h2>
