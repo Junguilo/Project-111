@@ -33,3 +33,9 @@ SELECT MediaWatched.mw_title, MediaWatched.mw_complete
 FROM MediaWatched, User
 WHERE MediaWatched.mw_userkey = User.u_userkey AND
     User.u_userkey = 1;
+
+SELECT *
+FROM HabitLog
+WHERE
+    hl_habitid = 1 AND
+    hl_log_date = "2024-12-07";

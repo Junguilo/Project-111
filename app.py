@@ -106,21 +106,39 @@ def logHabit():
         checkedStudy = request.form.getlist('studyHabits')
         checkedExercise = request.form.getlist('exerciseHabits')
 
+        checkedAll = checkedExercise + checkedStudy
+        duplicates = []
+        final = []
+    
         conn = openConnection(db)
-        
+        #Check if theres a habitlog already with our specific date & hmid
+        #We don't want duplicates
+        for i in checkedAll:
+            sql = conn.execute('''
+                    SELECT *
+                    FROM HabitLog
+                    WHERE
+                        hl_habitid = ? AND
+                        hl_log_date = ?
+            ''', (i, str(session['date'])))
+            res = sql.fetchone()
+            print(res)
+            if res != None:
+                duplicates.append(str(res[1]))
+
+
+        for i in checkedAll:
+            if i not in duplicates:
+                final.append(i)
+    
+        print("FINAL", final)
+        print("duplicates", duplicates)
         #insert habitid shit into the habitlog with our current date
-        for i in checkedStudy:
+        for i in final:
             conn.execute('''
                 INSERT INTO HabitLog (hl_habitid, hl_log_date, hl_status)
                         VALUES(?, ?, ?)
             ''', (i, session['date'], "FALSE"))
-                
-
-        for j in checkedExercise:
-            conn.execute('''
-                INSERT INTO HabitLog (hl_habitid, hl_log_date, hl_status)
-                        VALUES(?, ?, ?)
-            ''', (j, session['date'], "FALSE"))
                 
         conn.commit()
         conn.close()

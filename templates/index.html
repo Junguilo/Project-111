@@ -18,8 +18,9 @@
         {% endif %}
     </nav>
     {% if 'username' in session %}
+        <button type="submit">See ALL Habits created</button>
         <form method = "POST" action="/logHabit">
-            <h1>Habits Created <button type="submit">Log Habits(Does not work yet)</button></h1>
+            <h1>Habits Created <button type="submit">Log Habits</button></h1>
             <!-- Needs a habitlog function later to create specific logged habits -->
             <h2>Your Study Habits</h2>
             {% for post in studyHabits %}
