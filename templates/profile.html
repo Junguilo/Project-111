@@ -6,22 +6,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User and Movies</title>
     <style>
+        /* General Reset and Font Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1E1E2C; /* Deep navy background */
+            color: #E4E6EB; /* Light gray text for contrast */
+        }
+
+        /* Navigation Bar Styling */
         nav {
-            background-color: #333;
-            padding: 10px;
+            background-color: #2D2D44; /* Dark grayish blue */
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
         nav a {
-            color: white;
+            color: #A4E1E0; /* Soft teal */
             text-decoration: none;
-            margin-right: 15px;
+            margin: 0 15px;
+            font-size: 16px;
+            transition: color 0.3s ease;
         }
 
-        nav a:last-child {
-            margin-right: 0;
+        nav a:hover {
+            color: #F4A261; /* Muted orange for hover effect */
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #2D2D44; /* Matches navbar */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* User and Movie Sections */
+        .user,
+        .movie {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-bottom: 1px solid #3E3E56; /* Subtle divider */
+        }
+
+        .user p,
+        .movie p {
+            margin: 5px 0;
+            color: #E4E6EB; /* Light gray text */
+        }
+
+        .movie strong {
+            color: #F4A261; /* Highlighted orange for movie names */
+        }
+
+        /* Headings */
+        h1 {
+            font-size: 24px;
+            color: #A4E1E0; /* Soft teal */
+            margin-bottom: 20px;
+        }
+
+        /* Horizontal Rule */
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #3E3E56; /* Subtle divider color */
+            margin: 20px 0;
+        }
+
+        /* Footer Content Placeholder */
+        .content {
+            text-align: center;
+            margin-top: 20px;
+            color: #A4E1E0; /* Soft teal */
         }
     </style>
 </head>
@@ -40,24 +104,30 @@
         </div>
     </nav>
 
-    {% for item in user %}
-        <div>
-            <p>User: {{ item[1] }}</p>
-            <p>Email: {{ item[2] }}</p>
-        </div>
-    {% endfor %}
-    <hr>
+    <div class="container">
+        {% for item in user %}
+            <div class="user">
+                <p><strong>User:</strong> {{ item[1] }}</p>
+                <p><strong>Email:</strong> {{ item[2] }}</p>
+            </div>
+        {% endfor %}
 
-    <h1>Movies in List</h1>
+        <hr>
 
-    {% for item in movies %}
-        <div>
-            <p>Movie: <strong>{{ item[0] }}</strong></p>
-            <p>Completed?: {{ item[1] }}</p>
-        </div>
-    {% endfor %}
-   
-    <div class="content"></div>
+        <h1>Movies in List</h1>
+
+        {% for item in movies %}
+            <div class="movie">
+                <p><strong>Movie:</strong> {{ item[0] }}</p>
+                <p><strong>Completed?:</strong> {{ item[1] }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="content">
+        
+        <p>Manage your habits and movie lists seamlessly!</p>
+    </div>
 </body>
 
 </html>
