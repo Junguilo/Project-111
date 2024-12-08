@@ -1,38 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User and Movies</title>
+    <style>
+        nav {
+            background-color: #333;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        nav a:last-child {
+            margin-right: 0;
+        }
+    </style>
+</head>
+
 <body>
     <nav>
-        <a href="/">Home</a>
-        {% if 'username' in session%}
-            <a href="/create">Create Habit</a>
-            <a href="/profile">Profile </a>
-            <a href="/logout">Logout</a>
-        {% else %}
-            <a href="/login">Login/Register</a>
-        {% endif %}
+        <div>
+            <a href="/">Home</a>
+            {% if 'username' in session %}
+                <a href="/create">Create Habit</a>
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login/Register</a>
+            {% endif %}
+        </div>
     </nav>
 
-    {% for item in user%}
+    {% for item in user %}
         <div>
-            <!-- <p>{{ item }}</p> --> 
             <p>User: {{ item[1] }}</p>
             <p>Email: {{ item[2] }}</p>
         </div>
-    {% endfor%}
+    {% endfor %}
     <hr>
 
     <h1>Movies in List</h1>
 
-    {% for item in movies%}
-    <div>
-        <!-- <p>{{ item }}</p> --> 
-        <p>Movie: <strong>{{ item[0] }}</strong></p>
-        <p> Completed?: {{ item[1] }}</p>
-    </div>
-    {% endfor%}
-    <!-- Being able to add Movie IMAGES LATER -->
-    <div class="content">
-    </div>
+    {% for item in movies %}
+        <div>
+            <p>Movie: <strong>{{ item[0] }}</strong></p>
+            <p>Completed?: {{ item[1] }}</p>
+        </div>
+    {% endfor %}
+   
+    <div class="content"></div>
 </body>
+
 </html>

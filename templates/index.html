@@ -1,44 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker</title>
+    <style>
+        nav {
+            background-color: #333;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        nav a:last-child {
+            margin-right: 0;
+        }
+    </style>
+</head>
+
 <body>
     <nav>
-        <a href="/">Home</a>
-        {% if 'username' in session%}
-            <a href="/create">Create Habit</a>
-            <a href="/profile">Profile </a>
-            <a href="/logout">Logout</a>
-            <p>DEBUG: DATE: {{date}}
-            <form method="POST" action="/changeDate">
-                    <input type="date" id="date" name="date">
-                    <button type="submit">Change Date</button>
-            </form></p>
-        {% else %}
-            <a href="/login">Login/Register</a>
-        {% endif %}
+        <div>
+            <a href="/">Home</a>
+            {% if 'username' in session %}
+                <a href="/create">Create Habit</a>
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login/Register</a>
+            {% endif %}
+        </div>
     </nav>
+
     {% if 'username' in session %}
         <button type="submit">See ALL Habits created</button>
-        <form method = "POST" action="/logHabit">
+        <form method="POST" action="/logHabit">
             <h1>Habits Created <button type="submit">Log Habits</button></h1>
-            <!-- Needs a habitlog function later to create specific logged habits -->
+
             <h2>Your Study Habits</h2>
             {% for post in studyHabits %}
                 <div class='post'>
-                    <p><input type="checkbox" id="#" name="studyHabits" value = {{post[0]}}>{{ post }}</p>
+                    <p><input type="checkbox" id="#" name="studyHabits" value="{{ post[0] }}">{{ post }}</p>
                 </div>
             {% endfor %}
 
             <h2>Your Exercise Habits</h2>
             {% for post in exerciseHabits %}
                 <div class='post'>
-                    <p><input type="checkbox" id="#" name="exerciseHabits" value = {{post[0]}}>{{ post }}</p>
+                    <p><input type="checkbox" id="#" name="exerciseHabits" value="{{ post[0] }}">{{ post }}</p>
                 </div>
             {% endfor %}
         </form>
 
         <h1>Your Logged Habits</h1>
-        <h2>Your Logged Study  Habits</h2>
+        <h2>Your Logged Study Habits</h2>
         {% for post in studyLoggedHabits %}
             <div class='post'>
                 <p>{{ post }}</p>
@@ -53,11 +76,11 @@
         {% endfor %}
     {% else %}
         <div>
-            <p> Please Login to view Habits </p>
+            <p>Please Login to view Habits</p>
         </div>
     {% endif %}
     <hr>
-    <div class="content">
-    </div>
+    <div class="content"></div>
 </body>
+
 </html>

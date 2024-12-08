@@ -1,130 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Habit or Movie</title>
     <style>
-        .tabcontent {
-          display: none;
-          padding: 6px 12px;
-          border-top: none;
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        </style>
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        nav a:last-child {
+            margin-right: 0;
+        }
+
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border-top: none;
+        }
+
+        .tab button {
+            background-color: #f1f1f1;
+            border: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: 0.3s;
+        }
+
+        .tab button:hover {
+            background-color: #ddd;
+        }
+
+        .tab button.active {
+            background-color: #ccc;
+        }
+    </style>
+</head>
 <body>
     <nav>
-        <a href="/">Home</a>
-        {% if 'username' in session%}
-            <a href="/create">Create Habit</a>
-            <a href="/profile">Profile </a>
-            <a href="/logout">Logout</a>
-        {% else %}
-            <a href="/login">Login/Register</a>
-        {% endif %}
+        <div>
+            <a href="/">Home</a>
+            {% if 'username' in session %}
+                <a href="/create">Create Habit</a>
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login/Register</a>
+            {% endif %}
+        </div>
     </nav>
 
     <div>
         <h1>Add a Habit or Movie</h1>
     </div>
 
-    <body>
-        <!-- Tab links -->
-        <div class="tab">
-            <button class="tablinks" onclick="openCity(event, 'Exercise')">Exercise</button>
-            <button class="tablinks" onclick="openCity(event, 'Study')">Study</button>
-            <button class="tablinks" onclick="openCity(event, 'Movie')">Movie</button>
-        </div>
-    </body>
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'Exercise')">Exercise</button>
+        <button class="tablinks" onclick="openCity(event, 'Study')">Study</button>
+        <button class="tablinks" onclick="openCity(event, 'Movie')">Movie</button>
+    </div>
+
     
-    <!-- Tab content -->
     <div id="Exercise" class="tabcontent">
         <h1>Exercise Habit</h1>
         <form method="POST" action="/add_exercisehabit">
-            <!-- ExerciseHabits items-->
             <label for="eh_title">Title:</label><br>
             <input type="text" name="eh_title"><br><br>
             <label for="eh_description">Description:</label><br>
-            <textarea type="text" name="eh_description"></textarea><br><br>
+            <textarea name="eh_description"></textarea><br><br>
             <label for="eh_activitytype">Activity:</label><br>
             <input type="text" name="eh_activitytype"><br><br>
             <label for="eh_durationmin">Duration:</label><br>
             <input type="text" name="eh_durationmin"><br><br>
-
-            <!-- HabitManager items -->
             <label for="hm_exercise_startdate">Start Date:</label><br>
             <input type="date" id="hm_exercise_startdate" name="hm_exercise_startdate" required><br><br>
-            
             <label for="hm_exercise_enddate">End Date:</label><br>
             <input type="date" id="hm_exercise_enddate" name="hm_exercise_enddate" required><br><br>
-            
             <label for="hm_exercise_nonseq">Non-Sequential:</label><br>
             <input type="checkbox" id="hm_exercise_nonseq" name="hm_exercise_nonseq"><br><br>
-            
             <label for="hm_exercise_recurring">Recurring:</label><br>
             <input type="checkbox" id="hm_exercise_recurring" name="hm_exercise_recurring"><br><br>
-            
-            
-
             <button type="submit">Add Habit</button>
         </form>
     </div>
-    
+
     <div id="Study" class="tabcontent">
         <h1>Study Habit</h1>
         <form method="POST" action="/add_studyhabit">
-            <!-- StudyHabits items-->
             <label for="sh_title">Title:</label><br>
             <input type="text" name="sh_title"><br><br>
             <label for="sh_description">Description:</label><br>
-            <textarea type="text" name="sh_description"></textarea><br><br>
+            <textarea name="sh_description"></textarea><br><br>
             <label for="sh_subject">Subject:</label><br>
             <input type="text" name="sh_subject"><br><br>
             <label for="sh_durationmin">Duration:</label><br>
             <input type="text" name="sh_durationmin"><br><br>
-            
-            <!-- HabitManager items -->
             <label for="hm_study_startdate">Start Date:</label><br>
             <input type="date" id="hm_study_startdate" name="hm_study_startdate" required><br><br>
-            
             <label for="hm_study_enddate">End Date:</label><br>
             <input type="date" id="hm_study_enddate" name="hm_study_enddate" required><br><br>
-            
             <label for="hm_study_nonseq">Non-Sequential:</label><br>
             <input type="checkbox" id="hm_study_nonseq" name="hm_study_nonseq"><br><br>
-            
             <label for="hm_study_recurring">Recurring:</label><br>
             <input type="checkbox" id="hm_study_recurring" name="hm_study_recurring"><br><br>
-            
-            
-
             <button type="submit">Add Habit</button>
         </form>
     </div>
-    
+
     <div id="Movie" class="tabcontent">
         <h1>Add a Movie</h1>
         <p>Add movies later</p>
     </div>
+
     <hr>
-    <div class="content">
-    </div>
-</body>
+    <div class="content"></div>
 
-<script>
-    function openCity(evt, cityName) {
-      var i, tabcontent, tablinks;
-      //get all tab contents
-      tabcontent = document.getElementsByClassName("tabcontent");
-
-      //hide every single content before showing the one we want to show
-      for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-      }
-
-      tablinks = document.getElementsByClassName("tablinks");
-      for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-      }
-
-      //show the element
-      document.getElementById(cityName).style.display = "block";
-      evt.currentTarget.className += " active";
-    }
+    <script>
+        function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
     </script>
+</body>
 </html>
