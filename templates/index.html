@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Tracker</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
         nav {
             background-color: #333;
             padding: 10px;
@@ -22,6 +30,72 @@
 
         nav a:last-child {
             margin-right: 0;
+        }
+
+        .calendar {
+            display: flex;
+            justify-content: space-between; /* Ensures even spacing across the container */
+            background-color: #06D6A0;
+            color: white;
+            padding: 10px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .calendar div {
+            text-align: center;
+            font-size: 16px;
+            color: white; /* Ensure the day and date both use the white text color */
+        }
+
+        .calendar div span.date {
+            display: inline-block; /* Keeps the date on the same line as the day */
+            margin-left: 5px;
+            font-size: 14px;
+            color: white; /* Ensure the date has the same color as the day */
+        }
+
+        .calendar div span.show {
+            display: block;
+            font-size: 14px;
+            margin-top: 5px;
+            color: white; /* If you want the same color for the placeholder text */
+        }
+
+        section {
+            padding: 20px;
+            margin: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        section h2 {
+            color: #06D6A0;
+            margin-bottom: 10px;
+        }
+
+        .post {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .post input {
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #EF476F;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #D43F5E;
         }
     </style>
 </head>
@@ -40,25 +114,30 @@
         </div>
     </nav>
 
-    {% if 'username' in session %}
-        <button type="submit">See ALL Habits created</button>
-        <form method="POST" action="/logHabit">
-            <h1>Habits Created <button type="submit">Log Habits</button></h1>
+    <!-- Weekly Calendar -->
+    <div class="calendar" id="calendar"></div>
 
+    {% if 'username' in session %}
+        <!-- Habits Section -->
+        <section>
             <h2>Your Study Habits</h2>
             {% for post in studyHabits %}
                 <div class='post'>
-                    <p><input type="checkbox" id="#" name="studyHabits" value="{{ post[0] }}">{{ post }}</p>
+                    <input type="checkbox" id="#" name="studyHabits" value="{{ post[0] }}">
+                    <p>{{ post }}</p>
                 </div>
             {% endfor %}
+        </section>
 
+        <section>
             <h2>Your Exercise Habits</h2>
             {% for post in exerciseHabits %}
                 <div class='post'>
-                    <p><input type="checkbox" id="#" name="exerciseHabits" value="{{ post[0] }}">{{ post }}</p>
+                    <input type="checkbox" id="#" name="exerciseHabits" value="{{ post[0] }}">
+                    <p>{{ post }}</p>
                 </div>
             {% endfor %}
-        </form>
+        </section>
 
         <h1>Your Logged Habits</h1>
         <h2>Your Logged Study Habits</h2>
@@ -79,8 +158,24 @@
             <p>Please Login to view Habits</p>
         </div>
     {% endif %}
-    <hr>
-    <div class="content"></div>
 </body>
+
+<script>
+    // Generate the calendar for the current week
+    const calendar = document.getElementById('calendar');
+    const currentDate = new Date();
+    const startOfWeek = currentDate.getDate() - currentDate.getDay() + 1; // Monday
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    for (let i = 0; i < 7; i++) {
+        const dayDate = new Date(currentDate.setDate(startOfWeek + i));
+        const dayDiv = document.createElement('div');
+        dayDiv.innerHTML = `
+            ${days[i]}: <span class="date">${dayDate.getMonth() + 1}/${dayDate.getDate()}</span>
+            <span class="show">Show%</span> <!-- Placeholder for dynamic value -->
+        `;
+        calendar.appendChild(dayDiv);
+    }
+</script>
 
 </html>
