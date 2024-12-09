@@ -1,31 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        /* General Reset and Font Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1E1E2C; 
+            color: #E4E6EB;
+        }
+
+        /* Navigation Bar Styling */
+        nav {
+            background-color: #2D2D44;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        nav a {
+            color: #A4E1E0; 
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #F4A261; 
+        }
+
+        /* Register Form Container */
+        .register-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: #2D2D44;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #A4E1E0; 
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p.message {
+            color: #F4A261; 
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3E3E56;
+            color: #E4E6EB;
+            font-size: 14px;
+        }
+
+        input[type="submit"] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #A4E1E0;
+            color: #1E1E2C;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #F4A261;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .login-link a {
+            color: #A4E1E0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #F4A261;
+        }
+    </style>
+</head>
+
 <body>
     <nav>
-        <a href="/">Home</a>
-        {% if 'username' in session%}
-            <a href="/create">Create Habit</a>
-            <a href="/profile">Profile </a>
-            <a href="/logout">Logout</a>
-        {% else %}
-            <a href="/login">Login/Register</a>
-        {% endif %}
+        <div>
+            <a href="/">Home</a>
+            {% if 'username' in session %}
+                <a href="/create">Create Habit</a>
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login/Register</a>
+            {% endif %}
+        </div>
     </nav>
-    <title>Register</title>
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
-    <form method="post">
-        Username: <input type="text" name="username"><br>
-        Email: <input type="text" name="email"><br>
-        Password: <input type="password" name="password"><br>
-        <input type="submit" value="Register">
-    </form>
-    
 
-    <hr>
-    <div class="content">
+    <div class="register-container">
+        <h1>Register</h1>
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+        <form method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+            <input type="submit" value="Register">
+        </form>
+        <div class="login-link">
+            <a href="/login">Already have an account? Login here.</a>
+        </div>
     </div>
 </body>
+
 </html>
