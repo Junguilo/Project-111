@@ -14,7 +14,7 @@ CREATE TABLE MediaWatched (
     FOREIGN KEY (mw_userkey) REFERENCES User(u_userkey)
 );
 
-
+DROP TABLE HabitManager;
 CREATE TABLE HabitManager (
     hm_habitid INTEGER PRIMARY KEY,
     hm_userkey INT NOT NULL, 
@@ -35,19 +35,23 @@ CREATE TABLE HabitLog (
     FOREIGN KEY (hl_habitid) REFERENCES HabitManager(hm_habitid)
 );
 
+DROP TABLE StudyHabit;
 CREATE TABLE StudyHabit (
     sh_shhabitid INTEGER PRIMARY KEY,
-    sh_title VARCHAR(252) NOT NULL,
     sh_habitid INT NOT NULL,
+    sh_title VARCHAR(252) NOT NULL,
+    sh_description VARCHAR(252),
     sh_subject VARCHAR(252) NOT NULL, 
     sh_durationmin VARCHAR(252) NOT NULL,
     FOREIGN KEY (sh_habitid) REFERENCES HabitManager(hm_habitid)
 );
 
+DROP Table ExerciseHabit;
 CREATE TABLE ExerciseHabit (
     eh_ehhabitid INTEGER PRIMARY KEY,
     eh_habitid INT NOT NULL,
     eh_title VARCHAR(252) NOT NULL,
+    eh_description VARCHAR(252),
     eh_activitytype VARCHAR(252) NOT NULL,
     eh_durationmin VARCHAR(252) NOT NULL,
     FOREIGN KEY (eh_habitid) REFERENCES HabitManager(hm_habitid)
@@ -99,30 +103,54 @@ ALTER COLUMN hl_logid INTEGER PRIMARY KEY;
 
 -- --For habit ID that has been finalized (end date has passed)
 -- -- see how the user did for the a specific task (RATIO OF status/total logs SELECT)
--- WITH temp_user AS (
---     SELECT 1 AS user_ID --1 WILL BE QUESTION MARK INSTEAD
--- ),
--- temp_habit AS (
---     SELECT 1 AS habit_key --1 WILL BE QUESTION MARK INSTEAD
--- )
--- SELECT
---     (
---         SELECT COUNT(*)
---         FROM User, HabitManager, HabitLog, temp_user, temp_habit
---         WHERE temp_user.user_ID = User.u_userkey
---         AND User.u_userkey = HabitManager.hm_userkey
---         AND HabitManager.hm_habitid = temp_habit.habit_key
---         AND HabitManager.hm_habitid = HabitLog.hl_habitid
---         AND HabitLog.hl_status = 'TRUE'
---     ) *100.0 / 
---     (
---         SELECT COUNT(*)
---         FROM User, HabitManager, HabitLog, temp_user, temp_habit
---         WHERE temp_user.user_ID = User.u_userkey
---         AND HabitManager.hm_habitid = temp_habit.habit_key
---         AND User.u_userkey = HabitManager.hm_userkey
---         AND HabitManager.hm_habitid = HabitLog.hl_habitid
---     ) AS RATIO;
+WITH temp_user AS (
+    SELECT 1 AS user_ID --1 WILL BE QUESTION MARK INSTEAD
+),
+temp_habit AS (
+    SELECT 1 AS habit_key --1 WILL BE QUESTION MARK INSTEAD
+)
+SELECT
+    (
+        SELECT COUNT(*)
+        FROM User, HabitManager, HabitLog, temp_user, temp_habit
+        WHERE temp_user.user_ID = User.u_userkey
+        AND User.u_userkey = HabitManager.hm_userkey
+        AND HabitManager.hm_habitid = temp_habit.habit_key
+        AND HabitManager.hm_habitid = HabitLog.hl_habitid
+        AND HabitLog.hl_status = 'TRUE'
+    ) *100.0 / 
+    (
+        SELECT COUNT(*)
+        FROM User, HabitManager, HabitLog, temp_user, temp_habit
+        WHERE temp_user.user_ID = User.u_userkey
+        AND HabitManager.hm_habitid = temp_habit.habit_key
+        AND User.u_userkey = HabitManager.hm_userkey
+        AND HabitManager.hm_habitid = HabitLog.hl_habitid
+    ) AS RATIO;
+
+
+WITH temp_user AS (
+    SELECT 1 AS user_ID --1 WILL BE QUESTION MARK INSTEAD
+)SELECT
+    (
+        SELECT COUNT(*)
+        FROM User, HabitManager, HabitLog, temp_user
+        WHERE temp_user.user_ID = User.u_userkey
+        AND User.u_userkey = HabitManager.hm_userkey
+        --AND HabitManager.hm_habitid = temp_habit.habit_key
+        AND HabitManager.hm_habitid = HabitLog.hl_habitid
+        AND HabitLog.hl_log_date = '2024-12-08'
+        AND HabitLog.hl_status = 'TRUE'
+    ) *100.0 / 
+    (
+        SELECT COUNT(*)
+        FROM User, HabitManager, HabitLog, temp_user
+        WHERE temp_user.user_ID = User.u_userkey
+        --AND HabitManager.hm_habitid = temp_habit.habit_key
+        AND User.u_userkey = HabitManager.hm_userkey
+        AND HabitLog.hl_log_date = '2024-12-08'
+        AND HabitManager.hm_habitid = HabitLog.hl_habitid
+    ) AS RATIO;
 
 -- --User wants to see the data of specific subjects
 -- -- that they studied after a certain date. (SELECT)
