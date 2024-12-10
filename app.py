@@ -86,7 +86,9 @@ def index():
                     ) AS RATIO
                     LIMIT 1
             ''', (id, str(i), str(i) ) ).fetchall()
-            percCompletedDays.append(sql[0][0])
+            ratio = sql[0][0]
+            rounded_ratio = round(ratio, 2)  # Rounds to 2 decimal places
+            percCompletedDays.append(rounded_ratio)
 
         #Grab all habitids, ready to update 
         habitIDs = conn.execute('''
