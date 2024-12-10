@@ -61,12 +61,12 @@ def index():
             week.append(getFirstDayofWeek(date) + timedelta(days=i))
 
         #UPDATE THE WEEK BASED ON THE TASKS COMPLETED
-        #--FOR THAT DAY --
+        # --FOR THAT DAY --
         for i in week:
             sql = conn.execute('''
                 WITH temp_user AS (
                     SELECT ? AS user_ID --1 WILL BE QUESTION MARK INSTEAD
-                )SELECT
+                ) SELECT
                     (
                         SELECT COUNT(*)
                         FROM User, HabitManager, HabitLog, temp_user
@@ -75,7 +75,7 @@ def index():
                         AND HabitManager.hm_habitid = HabitLog.hl_habitid
                         AND HabitLog.hl_log_date = ?
                         AND HabitLog.hl_status = 'TRUE'
-                    ) *100.0 / 
+                    ) * 100.0 / 
                     (
                         SELECT COUNT(*)
                         FROM User, HabitManager, HabitLog, temp_user
@@ -85,9 +85,16 @@ def index():
                         AND HabitManager.hm_habitid = HabitLog.hl_habitid
                     ) AS RATIO
                     LIMIT 1
-            ''', (id, str(i), str(i) ) ).fetchall()
-            ratio = sql[0][0]
-            rounded_ratio = round(ratio, 2)  # Rounds to 2 decimal places
+            ''', (id, str(i), str(i))).fetchall()
+
+            # Check if SQL result is empty or contains NULL
+            ratio = sql[0][0] if sql and sql[0][0] is not None else None
+
+            if ratio is not None:
+                rounded_ratio = round(ratio, 2)  # Rounds to 2 decimal places
+            else:
+                rounded_ratio = '-'  # Default value for NULL case
+
             percCompletedDays.append(rounded_ratio)
 
         #Grab all habitids, ready to update 
