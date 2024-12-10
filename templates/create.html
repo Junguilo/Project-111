@@ -5,25 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Habit or Movie</title>
     <style>
+
+        /* General Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1E1E2C; /* Deep navy background */
+            color: #E4E6EB; /* Light gray text for contrast */
+        }
+        /* Navigation Bar Styling */
         nav {
-            background-color: #333;
-            color: white;
-            padding: 10px;
+            background-color: #2D2D44; /* Dark grayish blue */
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
         nav a {
-            color: white;
+            color: #A4E1E0; 
             text-decoration: none;
-            margin-right: 15px;
+            margin: 0 15px;
+            font-size: 16px;
+            transition: color 0.3s ease;
         }
 
-        nav a:last-child {
-            margin-right: 0;
+        nav a:hover {
+            color: #F4A261;
         }
-
         .tabcontent {
             display: none;
             padding: 6px 12px;
@@ -31,19 +42,82 @@
         }
 
         .tab button {
-            background-color: #f1f1f1;
+            background-color: #2D2D44; /* Dark grayish blue */
             border: none;
             cursor: pointer;
             padding: 10px 20px;
-            transition: 0.3s;
+            font-size: 16px;
+            color: #A4E1E0; /* Soft teal */
+            transition: background-color 0.3s ease;
         }
-
         .tab button:hover {
-            background-color: #ddd;
+            background-color: #F4A261; /* Muted orange */
+        }
+        .tab button.active {
+            background-color: #EF476F; /* Bright red for active tab */
+            color: white;
         }
 
-        .tab button.active {
-            background-color: #ccc;
+
+        /* Form Section Styling */
+        section {
+            padding: 20px;
+            margin: 20px auto;
+            background-color: #2D2D44;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+        }
+
+        section h2 {
+            color: #A4E1E0; /* Soft teal */
+            margin-bottom: 10px;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #EF476F; /* Bright red for buttons */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #D43F5E; /* Darker shade on hover */
+        }
+
+        /* Input Field Styling */
+        input[type="text"], input[type="date"], input[type="number"] {
+            background-color: #3E3E56; /* Slightly darker background for inputs */
+            border: 1px solid #A4E1E0; /* Soft teal border */
+            color: #E4E6EB; /* Light gray text */
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        /* Form Section for Adding Habits */
+        .habit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        textarea {
+            width: 100%; /* Adjusts the width to occupy the full container */
+            height: 150px; /* Increases the height to make it larger */
+            padding: 10px; /* Adds padding for better readability */
+            font-size: 14px; /* Increases the font size for better usability */
+            border: 1px solid #ccc; /* Adds a border for better visibility */
+            border-radius: 4px; /* Makes the corners rounded */
+            resize: vertical; /* Allows users to resize vertically */
+            background-color: #f9f9f9; /* Sets a light background for the text area */
+            color: #333; /* Ensures the text is readable */
         }
     </style>
 </head>
@@ -61,125 +135,93 @@
         </div>
     </nav>
 
-    <div>
-        <h1>Add a Habit or Movie</h1>
-    </div>
-
-    <div class="tab">
-        <button class="tablinks" onclick="openCity(event, 'Exercise')">Exercise</button>
-        <button class="tablinks" onclick="openCity(event, 'Study')">Study</button>
-        <button class="tablinks" onclick="openCity(event, 'Media')">Movie</button>
-        <button class="tablinks" onclick="openCity(event, 'DelEdit')">Delete / Edit</button>
-    </div>
-
-    
-    <div id="Exercise" class="tabcontent">
-        <h1>Exercise Habit</h1>
-        <form method="POST" action="/add_exercisehabit">
-            <label for="eh_title">Title:</label><br>
-            <input type="text" name="eh_title"><br><br>
-            <label for="eh_description">Description:</label><br>
-            <textarea name="eh_description"></textarea><br><br>
-            <label for="eh_activitytype">Activity:</label><br>
-            <input type="text" name="eh_activitytype"><br><br>
-            <label for="eh_durationmin">Duration:</label><br>
-            <input type="text" name="eh_durationmin"><br><br>
-            <label for="hm_exercise_startdate">Start Date:</label><br>
-            <input type="date" id="hm_exercise_startdate" name="hm_exercise_startdate" required><br><br>
-            <label for="hm_exercise_enddate">End Date:</label><br>
-            <input type="date" id="hm_exercise_enddate" name="hm_exercise_enddate" required><br><br>
-            <button type="submit">Add Habit</button>
-        </form>
-    </div>
-
-    <div id="Study" class="tabcontent">
-        <h1>Study Habit</h1>
-        <form method="POST" action="/add_studyhabit">
-            <label for="sh_title">Title:</label><br>
-            <input type="text" name="sh_title"><br><br>
-            <label for="sh_description">Description:</label><br>
-            <textarea name="sh_description"></textarea><br><br>
-            <label for="sh_subject">Subject:</label><br>
-            <input type="text" name="sh_subject"><br><br>
-            <label for="sh_durationmin">Duration:</label><br>
-            <input type="text" name="sh_durationmin"><br><br>
-            <label for="hm_study_startdate">Start Date:</label><br>
-            <input type="date" id="hm_study_startdate" name="hm_study_startdate" required><br><br>
-            <label for="hm_study_enddate">End Date:</label><br>
-            <input type="date" id="hm_study_enddate" name="hm_study_enddate" required><br><br>
-            <button type="submit">Add Habit</button>
-        </form>
-    </div>
-
-    <div id="Media" class="tabcontent">
-        <h1>Add a Media Watched</h1>
-        <form method="POST" action="/add_mediaWatched">
-            <label for="sh_mediatype">Media Type:</label><br>
-            <input type="text" name="mw_mediatype"><br><br>
-            <label for="mw_title">Title:</label><br>
-            <input type="text" name="mw_title"><br><br>
-            <label for="mw_complete">Completed?:</label><br>
-            <input type="checkbox" id="mw_complete" name="mw_complete"><br><br>
-            <button type="submit">Add Media</button>
-        </form>
-    </div>
-
-    <div id="DelEdit" class="tabcontent">
-        <h1>Exercise Habits</h1>
-        {% for post in exerciseHabits %}
-        <div id="display-{{ post[0] }}" style="display: block;">
-                <p style="display:inline-block"> Title: {{ post[1] }}, Description: {{post[2]}}, Activity: {{post[3]}}, Date Duration: {{post[4] + " - "+ post[5]}}, Minute Duration: {{post[6]}}
-                    <form method="POST" action="/deleteHabit" style="display: inline;">
-                    <button type="submit" name="delExHabit" class="delete-button" value="{{ post[0] }}">Delete</button>
-                    </form>
-                    <button type="button" onclick="showEditForm('{{ post[0] }}')">Edit</button>
-                </p>
+    <section>
+        <div>
+            <h2>Add a Habit or Movie</h2>
         </div>
-        <!-- Editable Form -->
-        <div id="edit-{{ post[0] }}" style="display: none;">
-            <form method="POST" action="/editExerciseHabit">
-                <input type="hidden" name="hm_habitid" value="{{ post[0] }}">
-                <label for="eh_title" >Title:</label><br>
-                <input type="text" name="eh_title" value="{{ post[1] }}"><br><br>
+
+        <div class="tab">
+            <button class="tablinks" onclick="openCity(event, 'Exercise')">Exercise</button>
+            <button class="tablinks" onclick="openCity(event, 'Study')">Study</button>
+            <button class="tablinks" onclick="openCity(event, 'Media')">Movie</button>
+            <button class="tablinks" onclick="openCity(event, 'DelEdit')">Delete / Edit</button>
+        </div>
+
+        
+        <div id="Exercise" class="tabcontent">
+            <h2>Exercise Habit</h2>
+            <form method="POST" action="/add_exercisehabit">
+                <label for="eh_title">Title:</label><br>
+                <input type="text" name="eh_title"><br><br>
                 <label for="eh_description">Description:</label><br>
-                <textarea name="eh_description" value="{{ post[2] }}"></textarea><br><br>
+                <textarea name="eh_description"></textarea><br><br>
                 <label for="eh_activitytype">Activity:</label><br>
-                <input type="text" name="eh_activitytype" value="{{ post[3] }}"><br><br>
+                <input type="text" name="eh_activitytype"><br><br>
                 <label for="eh_durationmin">Duration:</label><br>
-                <input type="text" name="eh_durationmin" value="{{ post[6] }}""><br><br>
-                <!-- <label for="hm_exercise_startdate">Start Date:</label><br>
-                <input type="date" id="hm_exercise_startdate" name="hm_exercise_startdate" value="{{ post[4] }}"><br><br>
+                <input type="text" name="eh_durationmin"><br><br>
+                <label for="hm_exercise_startdate">Start Date:</label><br>
+                <input type="date" id="hm_exercise_startdate" name="hm_exercise_startdate" required><br><br>
                 <label for="hm_exercise_enddate">End Date:</label><br>
-                <input type="date" id="hm_exercise_enddate" name="hm_exercise_enddate" value="{{ post[5] }}"><br><br> -->
-                <button type="submit">Save</button>
-                <button type="button" onclick="cancelEdit('{{ post[0] }}')">Cancel</button>
+                <input type="date" id="hm_exercise_enddate" name="hm_exercise_enddate" required><br><br>
+                <button type="submit">Add Habit</button>
             </form>
         </div>
-        {% endfor %}
 
-        <!-- Need to do same for studyhabits -->
-        <h1>Study Habits</h1>
-        {% for post in studyHabits %}
-        <div id="display-{{ post[0] }}" style="display: block;">
-            <p style="display:inline-block"> Title: {{ post[1] }}, Description: {{post[2]}}, Subject: {{post[3]}}, Date Duration: {{post[4] + " - "+ post[5]}}, Minute Duration: {{post[6]}}
-                <form method="POST" action="/deleteHabit" style="display: inline;">
-                <button type="submit" name="delExHabit" class="delete-button" value="{{ post[0] }}">Delete</button>
-                </form>
-                <button type="button" onclick="showEditForm('{{ post[0] }}')">Edit</button>
-            </p>
+        <div id="Study" class="tabcontent">
+            <h2>Study Habit</h2>
+            <form method="POST" action="/add_studyhabit">
+                <label for="sh_title">Title:</label><br>
+                <input type="text" name="sh_title"><br><br>
+                <label for="sh_description">Description:</label><br>
+                <textarea name="sh_description"></textarea><br><br>
+                <label for="sh_subject">Subject:</label><br>
+                <input type="text" name="sh_subject"><br><br>
+                <label for="sh_durationmin">Duration:</label><br>
+                <input type="text" name="sh_durationmin"><br><br>
+                <label for="hm_study_startdate">Start Date:</label><br>
+                <input type="date" id="hm_study_startdate" name="hm_study_startdate" required><br><br>
+                <label for="hm_study_enddate">End Date:</label><br>
+                <input type="date" id="hm_study_enddate" name="hm_study_enddate" required><br><br>
+                <button type="submit">Add Habit</button>
+            </form>
         </div>
+
+        <div id="Media" class="tabcontent">
+            <h2>Add a Media Watched</h2>
+            <form method="POST" action="/add_mediaWatched">
+                <label for="sh_mediatype">Media Type:</label><br>
+                <input type="text" name="mw_mediatype"><br><br>
+                <label for="mw_title">Title:</label><br>
+                <input type="text" name="mw_title"><br><br>
+                <label for="mw_complete">Completed?:</label><br>
+                <input type="checkbox" id="mw_complete" name="mw_complete"><br><br>
+                <button type="submit">Add Media</button>
+            </form>
+        </div>
+
+        <div id="DelEdit" class="tabcontent">
+            <h2>Exercise Habits</h2>
+            {% for post in exerciseHabits %}
+            <div id="display-{{ post[0] }}" style="display: block;">
+                    <p style="display:inline-block"> Title: {{ post[1] }}, Description: {{post[2]}}, Activity: {{post[3]}}, Date Duration: {{post[4] + " - "+ post[5]}}, Minute Duration: {{post[6]}}
+                        <form method="POST" action="/deleteHabit" style="display: inline;">
+                        <button type="submit" name="delExHabit" class="delete-button" value="{{ post[0] }}">Delete</button>
+                        </form>
+                        <button type="button" onclick="showEditForm('{{ post[0] }}')">Edit</button>
+                    </p>
+            </div>
             <!-- Editable Form -->
             <div id="edit-{{ post[0] }}" style="display: none;">
-                <form method="POST" action="/editStudyHabit">
+                <form method="POST" action="/editExerciseHabit">
                     <input type="hidden" name="hm_habitid" value="{{ post[0] }}">
-                    <label for="sh_title" >Title:</label><br>
-                    <input type="text" name="sh_title" value="{{ post[1] }}"><br><br>
-                    <label for="sh_description">Description:</label><br>
-                    <textarea name="sh_description" value="{{ post[2] }}"></textarea><br><br>
-                    <label for="sh_subject">Subject:</label><br>
-                    <input type="text" name="sh_subject" value="{{ post[3] }}"><br><br>
-                    <label for="sh_durationmin">Duration:</label><br>
-                    <input type="text" name="sh_durationmin" value="{{ post[6] }}""><br><br>
+                    <label for="eh_title" >Title:</label><br>
+                    <input type="text" name="eh_title" value="{{ post[1] }}"><br><br>
+                    <label for="eh_description">Description:</label><br>
+                    <textarea name="eh_description" value="{{ post[2] }}"></textarea><br><br>
+                    <label for="eh_activitytype">Activity:</label><br>
+                    <input type="text" name="eh_activitytype" value="{{ post[3] }}"><br><br>
+                    <label for="eh_durationmin">Duration:</label><br>
+                    <input type="text" name="eh_durationmin" value="{{ post[6] }}""><br><br>
                     <!-- <label for="hm_exercise_startdate">Start Date:</label><br>
                     <input type="date" id="hm_exercise_startdate" name="hm_exercise_startdate" value="{{ post[4] }}"><br><br>
                     <label for="hm_exercise_enddate">End Date:</label><br>
@@ -188,31 +230,65 @@
                     <button type="button" onclick="cancelEdit('{{ post[0] }}')">Cancel</button>
                 </form>
             </div>
-        {% endfor %}
-        <h1>Media</h1>
-        {% for item in media %}
-        <div id="display-{{ item[0] }}" style="display: block;">
-            <p style="display:inline-block"> Title: {{item[1]}}, Completed: {{item[2]}}
-                <form method="POST" action="/deleteMedia" style="display: inline;">
-                <button type="submit" name="delMedia" class="delete-button" value="{{ item[0] }}">Delete</button>
+            {% endfor %}
+
+            <!-- Need to do same for studyhabits -->
+            <h2>Study Habits</h2>
+            {% for post in studyHabits %}
+            <div id="display-{{ post[0] }}" style="display: block;">
+                <p style="display:inline-block"> Title: {{ post[1] }}, Description: {{post[2]}}, Subject: {{post[3]}}, Date Duration: {{post[4] + " - "+ post[5]}}, Minute Duration: {{post[6]}}
+                    <form method="POST" action="/deleteHabit" style="display: inline;">
+                    <button type="submit" name="delExHabit" class="delete-button" value="{{ post[0] }}">Delete</button>
+                    </form>
+                    <button type="button" onclick="showEditForm('{{ post[0] }}')">Edit</button>
+                </p>
+            </div>
+                <!-- Editable Form -->
+                <div id="edit-{{ post[0] }}" style="display: none;">
+                    <form method="POST" action="/editStudyHabit">
+                        <input type="hidden" name="hm_habitid" value="{{ post[0] }}">
+                        <label for="sh_title" >Title:</label><br>
+                        <input type="text" name="sh_title" value="{{ post[1] }}"><br><br>
+                        <label for="sh_description">Description:</label><br>
+                        <textarea name="sh_description" value="{{ post[2] }}"></textarea><br><br>
+                        <label for="sh_subject">Subject:</label><br>
+                        <input type="text" name="sh_subject" value="{{ post[3] }}"><br><br>
+                        <label for="sh_durationmin">Duration:</label><br>
+                        <input type="text" name="sh_durationmin" value="{{ post[6] }}""><br><br>
+                        <!-- <label for="hm_exercise_startdate">Start Date:</label><br>
+                        <input type="date" id="hm_exercise_startdate" name="hm_exercise_startdate" value="{{ post[4] }}"><br><br>
+                        <label for="hm_exercise_enddate">End Date:</label><br>
+                        <input type="date" id="hm_exercise_enddate" name="hm_exercise_enddate" value="{{ post[5] }}"><br><br> -->
+                        <button type="submit">Save</button>
+                        <button type="button" onclick="cancelEdit('{{ post[0] }}')">Cancel</button>
+                    </form>
+                </div>
+            {% endfor %}
+            <h2>Media</h2>
+            {% for item in media %}
+            <div id="display-{{ item[0] }}" style="display: block;">
+                <p style="display:inline-block"> Title: {{item[1]}}, Completed: {{item[2]}}
+                    <form method="POST" action="/deleteMedia" style="display: inline;">
+                    <button type="submit" name="delMedia" class="delete-button" value="{{ item[0] }}">Delete</button>
+                    </form>
+                    <button type="button" onclick="showEditForm('{{ item[0] }}')">Edit</button>
+                </p>
+            </div>
+            <!-- Editable Form -->
+            <div id="edit-{{ item[0] }}" style="display: none;">
+                <form method="POST" action="/editMedia">
+                    <input type="hidden" name="mw_mediaid" value="{{ item[0] }}">
+                    <label for="mw_title" >Title:</label><br>
+                    <input type="text" name="mw_title" value="{{ item[1] }}"><br><br>
+                    <label for="mw_complete">Completed?:</label><br>
+                    <input type="checkbox" id="mw_complete" name="mw_complete" ><br><br>
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="cancelEdit('{{ item[0] }}')">Cancel</button>
                 </form>
-                <button type="button" onclick="showEditForm('{{ item[0] }}')">Edit</button>
-            </p>
+            </div>
+            {% endfor %}
         </div>
-        <!-- Editable Form -->
-        <div id="edit-{{ item[0] }}" style="display: none;">
-            <form method="POST" action="/editMedia">
-                <input type="hidden" name="mw_mediaid" value="{{ item[0] }}">
-                <label for="mw_title" >Title:</label><br>
-                <input type="text" name="mw_title" value="{{ item[1] }}"><br><br>
-                <label for="mw_complete">Completed?:</label><br>
-                <input type="checkbox" id="mw_complete" name="mw_complete" ><br><br>
-                <button type="submit">Save</button>
-                <button type="button" onclick="cancelEdit('{{ item[0] }}')">Cancel</button>
-            </form>
-        </div>
-        {% endfor %}
-    </div>
+    </section>
 
     <hr>
     <div class="content"></div>
@@ -235,16 +311,16 @@
 </body>
 <script>
     function showEditForm(habitId) {
-        // Hide the static display
+       
         document.getElementById(`display-${habitId}`).style.display = 'none';
-        // Show the edit form
+        
         document.getElementById(`edit-${habitId}`).style.display = 'block';
     }
     
     function cancelEdit(habitId) {
-        // Show the static display
+        
         document.getElementById(`display-${habitId}`).style.display = 'block';
-        // Hide the edit form
+        
         document.getElementById(`edit-${habitId}`).style.display = 'none';
     }
     </script>
