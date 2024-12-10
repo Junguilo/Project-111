@@ -177,20 +177,158 @@ def index():
 
     return render_template('index.html', date = date, studyHabits = studyHabits, exerciseHabits = exerciseHabits ,studyLoggedHabits = loggedStudy, exerciseLoggedHabits = loggedExercise, percCompletedDays = percCompletedDays)
 
-@app.route('/editHabit', methods=['GET', 'POST'])
-def editHabit():
-    print("pressed Edit")
-    return redirect(url_for('index'))
+@app.route('/editExerciseHabit', methods=['GET', 'POST'])
+def editExerciseHabit():
+    if request.method == "POST":
+        #get habit manager items
+        hm_userkey = session['userID']
+        hm_id = request.form['hm_habitid']
+        # hm_startdate = request.form['hm_exercise_startdate']
+        # hm_enddate = request.form['hm_exercise_enddate']
 
+        #get exercisehabit items
+        title = request.form['eh_title']
+        description = request.form['eh_description']
+        activity = request.form['eh_activitytype']
+        duration = request.form['eh_durationmin']
+
+        # print(f"""
+        # Habit Manager Items:
+        #     User ID: {hm_userkey}
+        #     Habit ID: {hm_id}
+
+        # Exercise Habit Items:
+        #     Title: {title}
+        #     Description: {description}
+        #     Activity: {activity}
+        #     Duration: {duration}
+        # """)
+
+        conn = openConnection(db)
+        conn.execute('''
+            UPDATE ExerciseHabit
+            SET eh_title = ?, eh_description = ?, eh_activitytype = ?, eh_durationmin = ?
+            WHERE eh_habitid = ? 
+        ''', (title, description, activity, duration, hm_id))
+        conn.commit()
+        conn.close()
+
+        print("pressed Edit")
+        return redirect(url_for('create'))
+
+@app.route('/editStudyHabit', methods=['GET', 'POST'])
+def editStudyHabit():
+    if request.method == "POST":
+        #get habit manager items
+        hm_userkey = session['userID']
+        hm_id = request.form['hm_habitid']
+        # hm_startdate = request.form['hm_exercise_startdate']
+        # hm_enddate = request.form['hm_exercise_enddate']
+
+        #get exercisehabit items
+        title = request.form['sh_title']
+        description = request.form['sh_description']
+        subject = request.form['sh_subject']
+        duration = request.form['sh_durationmin']
+
+        # print(f"""
+        # Habit Manager Items:
+        #     User ID: {hm_userkey}
+        #     Habit ID: {hm_id}
+
+        # Exercise Habit Items:
+        #     Title: {title}
+        #     Description: {description}
+        #     Activity: {activity}
+        #     Duration: {duration}
+        # """)
+
+        conn = openConnection(db)
+        conn.execute('''
+            UPDATE StudyHabit
+            SET sh_title = ?, sh_description = ?, sh_subject = ?, sh_durationmin = ?
+            WHERE sh_habitid = ? 
+        ''', (title, description, subject, duration, hm_id))
+        conn.commit()
+        conn.close()
+
+        print("pressed Edit")
+        return redirect(url_for('create'))
+
+@app.route('/editMedia', methods=['GET', 'POST'])
+def editMedia():
+    if request.method == "POST":
+        #get habit manager items
+        mw_userkey = session['userID']
+        # hm_startdate = request.form['hm_exercise_startdate']
+        # hm_enddate = request.form['hm_exercise_enddate']
+
+        #get exercisehabit items
+        mw_id = request.form['mw_mediaid']
+        mw_title = request.form['mw_title']
+        mw_complete = request.form.get('mw_complete') 
+
+        if mw_complete:
+            mw_complete = 'TRUE'
+        else:
+            mw_complete = 'FALSE'
+
+        conn = openConnection(db)
+        conn.execute('''
+            UPDATE MediaWatched
+            SET mw_title = ? , mw_complete = ?
+            WHERE mw_mediaid = ? 
+        ''', (mw_title, mw_complete, mw_id))
+        conn.commit()
+        conn.close()
+
+    return redirect(url_for('create'))
+
+@app.route('/deleteMedia', methods=['GET', 'POST'])
+def deleteMedia():
+    if request.method == "POST":
+        checkedHabit = request.form.get('delMedia')
+        print(f"Deleting habit with ID: {checkedHabit}")
+
+        conn = openConnection(db)
+        conn.execute('''
+            DELETE FROM MediaWatched
+            WHERE mw_mediaid = ?
+        ''', (checkedHabit, ))
+        conn.commit()
+        conn.close()
+
+    return redirect(url_for('create'))
 
 @app.route('/deleteHabit', methods=['GET', 'POST'])
 def deleteHabit():
-    checkedStudy = request.form.getlist('studyHabits')
-    checkedExercise = request.form.getlist('exerciseHabits')
-    print(checkedExercise)
-    print(checkedStudy)
-    print("pressed Delete")
-    return redirect(url_for('index'))
+    if request.method == 'POST':
+        checkedHabit = request.form.get('delExHabit')
+        print(f"Deleting habit with ID: {checkedHabit}")
+        conn = openConnection(db)
+        conn.execute('''
+            DELETE FROM HabitManager
+            WHERE hm_habitid = ?
+        ''', (checkedHabit, ))
+
+        conn.execute('''
+            DELETE From StudyHabit
+            WHERE sh_habitid = ?
+        ''', (checkedHabit, ))
+
+        conn.execute('''
+            DELETE From ExerciseHabit
+            WHERE eh_habitid = ?
+        ''', (checkedHabit, ))
+
+        conn.execute('''
+            DELETE FROM HabitLog
+            WHERE hl_habitid = ?
+        ''', (checkedHabit, ))
+        conn.commit()
+        conn.close()
+
+    return redirect(url_for('create'))
 
 #We NEED a date changer in order to test out needed functions
 @app.route('/changeDate', methods=['GET', 'POST'])
@@ -283,7 +421,40 @@ def logHabit():
 #redirects to the create habit page
 @app.route('/create')
 def create():
-    return render_template('create.html')
+    studyHabits = None
+    exerciseHabits = None
+    media = None
+
+    conn = openConnection(db)
+    if session['username']:
+        id = session['userID']
+        #Grab the SINGULAR habits that the user has created 
+        studyHabits = conn.execute('''
+            SELECT hm_habitid, sh_title, sh_description, sh_subject, hm_startdate, hm_enddate, sh_durationmin, hm_percentCompleted
+            FROM User, HabitManager, StudyHabit
+            WHERE User.u_userkey = HabitManager.hm_userkey 
+            AND HabitManager.hm_habitid = StudyHabit.sh_habitid
+            AND hm_userkey = ?
+        ''', (id, )).fetchall()
+
+        exerciseHabits = conn.execute('''
+            SELECT hm_habitid, eh_title, eh_description, eh_activitytype, hm_startdate, hm_enddate, eh_durationmin, hm_percentCompleted
+            FROM User, HabitManager, ExerciseHabit
+            WHERE User.u_userkey = HabitManager.hm_userkey 
+            AND HabitManager.hm_habitid = ExerciseHabit.eh_habitid
+            AND hm_userkey = ?
+        ''', (id, )).fetchall()
+
+        media = conn.execute('''
+                 SELECT mw_mediaid, mw_title, MediaWatched.mw_complete
+                 FROM MediaWatched, User
+                 WHERE MediaWatched.mw_userkey = User.u_userkey AND
+                     User.u_userkey = ?
+        ''', (id, )).fetchall()
+    
+        #print(studyHabits)
+        conn.close()
+    return render_template('create.html', studyHabits = studyHabits, exerciseHabits = exerciseHabits, media = media)
 
 #Only works if the user key is in our db
 #We gotta add like two different functions of the same function cause idk how to grab specific items
@@ -364,7 +535,32 @@ def add_exercisehabit():
         
         conn.close()
     
-    return render_template('create.html')
+    return redirect(url_for('create'))
+
+@app.route('/add_mediaWatched', methods=['GET', 'POST'])
+def add_mediaWatched():
+    if request.method == 'POST' and session['username']:
+        mw_userkey = session['userID']
+        mw_mediatype = request.form['mw_mediatype']
+        mw_title = request.form['mw_title']
+        mw_complete = request.form.get('mw_complete') == 'on'
+        print("PRINT", mw_complete)
+        if mw_complete:
+            mw_complete = 'TRUE'
+        else:
+            mw_complete = 'FALSE'
+        
+        conn = openConnection(db)
+
+        conn.execute('''
+            INSERT INTO MediaWatched (mw_userkey, mw_mediatype, mw_title, mw_complete)
+            VALUES (?, ?, ?, ? )
+        ''', (mw_userkey, mw_mediatype, mw_title, mw_complete))
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for('create'))
+
 
 @app.route('/add_studyhabit', methods=['GET', 'POST'])
 def add_studyhabit():
@@ -442,7 +638,7 @@ def add_studyhabit():
         conn.commit()
         conn.close()
     
-    return render_template('create.html')
+    return redirect(url_for('create'))
 
 # User Profile
 #listing their information, 

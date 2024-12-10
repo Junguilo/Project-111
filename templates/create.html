@@ -68,8 +68,8 @@
     <div class="tab">
         <button class="tablinks" onclick="openCity(event, 'Exercise')">Exercise</button>
         <button class="tablinks" onclick="openCity(event, 'Study')">Study</button>
-        <button class="tablinks" onclick="openCity(event, 'Movie')">Movie</button>
-        <button class="tablinks" onclick="openCity(event, 'DelEdit')">Delete/Edit</button>
+        <button class="tablinks" onclick="openCity(event, 'Media')">Movie</button>
+        <button class="tablinks" onclick="openCity(event, 'DelEdit')">Delete / Edit</button>
     </div>
 
     
@@ -88,10 +88,6 @@
             <input type="date" id="hm_exercise_startdate" name="hm_exercise_startdate" required><br><br>
             <label for="hm_exercise_enddate">End Date:</label><br>
             <input type="date" id="hm_exercise_enddate" name="hm_exercise_enddate" required><br><br>
-            <label for="hm_exercise_nonseq">Non-Sequential:</label><br>
-            <input type="checkbox" id="hm_exercise_nonseq" name="hm_exercise_nonseq"><br><br>
-            <label for="hm_exercise_recurring">Recurring:</label><br>
-            <input type="checkbox" id="hm_exercise_recurring" name="hm_exercise_recurring"><br><br>
             <button type="submit">Add Habit</button>
         </form>
     </div>
@@ -111,21 +107,111 @@
             <input type="date" id="hm_study_startdate" name="hm_study_startdate" required><br><br>
             <label for="hm_study_enddate">End Date:</label><br>
             <input type="date" id="hm_study_enddate" name="hm_study_enddate" required><br><br>
-            <label for="hm_study_nonseq">Non-Sequential:</label><br>
-            <input type="checkbox" id="hm_study_nonseq" name="hm_study_nonseq"><br><br>
-            <label for="hm_study_recurring">Recurring:</label><br>
-            <input type="checkbox" id="hm_study_recurring" name="hm_study_recurring"><br><br>
             <button type="submit">Add Habit</button>
         </form>
     </div>
 
-    <div id="Movie" class="tabcontent">
-        <h1>Add a Movie</h1>
-        <p>Add movies later</p>
+    <div id="Media" class="tabcontent">
+        <h1>Add a Media Watched</h1>
+        <form method="POST" action="/add_mediaWatched">
+            <label for="sh_mediatype">Media Type:</label><br>
+            <input type="text" name="mw_mediatype"><br><br>
+            <label for="mw_title">Title:</label><br>
+            <input type="text" name="mw_title"><br><br>
+            <label for="mw_complete">Completed?:</label><br>
+            <input type="checkbox" id="mw_complete" name="mw_complete"><br><br>
+            <button type="submit">Add Media</button>
+        </form>
     </div>
 
     <div id="DelEdit" class="tabcontent">
-        Show History later
+        <h1>Exercise Habits</h1>
+        {% for post in exerciseHabits %}
+        <div id="display-{{ post[0] }}" style="display: block;">
+                <p style="display:inline-block"> Title: {{ post[1] }}, Description: {{post[2]}}, Activity: {{post[3]}}, Date Duration: {{post[4] + " - "+ post[5]}}, Minute Duration: {{post[6]}}
+                    <form method="POST" action="/deleteHabit" style="display: inline;">
+                    <button type="submit" name="delExHabit" class="delete-button" value="{{ post[0] }}">Delete</button>
+                    </form>
+                    <button type="button" onclick="showEditForm('{{ post[0] }}')">Edit</button>
+                </p>
+        </div>
+        <!-- Editable Form -->
+        <div id="edit-{{ post[0] }}" style="display: none;">
+            <form method="POST" action="/editExerciseHabit">
+                <input type="hidden" name="hm_habitid" value="{{ post[0] }}">
+                <label for="eh_title" >Title:</label><br>
+                <input type="text" name="eh_title" value="{{ post[1] }}"><br><br>
+                <label for="eh_description">Description:</label><br>
+                <textarea name="eh_description" value="{{ post[2] }}"></textarea><br><br>
+                <label for="eh_activitytype">Activity:</label><br>
+                <input type="text" name="eh_activitytype" value="{{ post[3] }}"><br><br>
+                <label for="eh_durationmin">Duration:</label><br>
+                <input type="text" name="eh_durationmin" value="{{ post[6] }}""><br><br>
+                <!-- <label for="hm_exercise_startdate">Start Date:</label><br>
+                <input type="date" id="hm_exercise_startdate" name="hm_exercise_startdate" value="{{ post[4] }}"><br><br>
+                <label for="hm_exercise_enddate">End Date:</label><br>
+                <input type="date" id="hm_exercise_enddate" name="hm_exercise_enddate" value="{{ post[5] }}"><br><br> -->
+                <button type="submit">Save</button>
+                <button type="button" onclick="cancelEdit('{{ post[0] }}')">Cancel</button>
+            </form>
+        </div>
+        {% endfor %}
+
+        <!-- Need to do same for studyhabits -->
+        <h1>Study Habits</h1>
+        {% for post in studyHabits %}
+        <div id="display-{{ post[0] }}" style="display: block;">
+            <p style="display:inline-block"> Title: {{ post[1] }}, Description: {{post[2]}}, Subject: {{post[3]}}, Date Duration: {{post[4] + " - "+ post[5]}}, Minute Duration: {{post[6]}}
+                <form method="POST" action="/deleteHabit" style="display: inline;">
+                <button type="submit" name="delExHabit" class="delete-button" value="{{ post[0] }}">Delete</button>
+                </form>
+                <button type="button" onclick="showEditForm('{{ post[0] }}')">Edit</button>
+            </p>
+        </div>
+            <!-- Editable Form -->
+            <div id="edit-{{ post[0] }}" style="display: none;">
+                <form method="POST" action="/editStudyHabit">
+                    <input type="hidden" name="hm_habitid" value="{{ post[0] }}">
+                    <label for="sh_title" >Title:</label><br>
+                    <input type="text" name="sh_title" value="{{ post[1] }}"><br><br>
+                    <label for="sh_description">Description:</label><br>
+                    <textarea name="sh_description" value="{{ post[2] }}"></textarea><br><br>
+                    <label for="sh_subject">Subject:</label><br>
+                    <input type="text" name="sh_subject" value="{{ post[3] }}"><br><br>
+                    <label for="sh_durationmin">Duration:</label><br>
+                    <input type="text" name="sh_durationmin" value="{{ post[6] }}""><br><br>
+                    <!-- <label for="hm_exercise_startdate">Start Date:</label><br>
+                    <input type="date" id="hm_exercise_startdate" name="hm_exercise_startdate" value="{{ post[4] }}"><br><br>
+                    <label for="hm_exercise_enddate">End Date:</label><br>
+                    <input type="date" id="hm_exercise_enddate" name="hm_exercise_enddate" value="{{ post[5] }}"><br><br> -->
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="cancelEdit('{{ post[0] }}')">Cancel</button>
+                </form>
+            </div>
+        {% endfor %}
+        <h1>Media</h1>
+        {% for item in media %}
+        <div id="display-{{ item[0] }}" style="display: block;">
+            <p style="display:inline-block"> Title: {{item[1]}}, Completed: {{item[2]}}
+                <form method="POST" action="/deleteMedia" style="display: inline;">
+                <button type="submit" name="delMedia" class="delete-button" value="{{ item[0] }}">Delete</button>
+                </form>
+                <button type="button" onclick="showEditForm('{{ item[0] }}')">Edit</button>
+            </p>
+        </div>
+        <!-- Editable Form -->
+        <div id="edit-{{ item[0] }}" style="display: none;">
+            <form method="POST" action="/editMedia">
+                <input type="hidden" name="mw_mediaid" value="{{ item[0] }}">
+                <label for="mw_title" >Title:</label><br>
+                <input type="text" name="mw_title" value="{{ item[1] }}"><br><br>
+                <label for="mw_complete">Completed?:</label><br>
+                <input type="checkbox" id="mw_complete" name="mw_complete" ><br><br>
+                <button type="submit">Save</button>
+                <button type="button" onclick="cancelEdit('{{ item[0] }}')">Cancel</button>
+            </form>
+        </div>
+        {% endfor %}
     </div>
 
     <hr>
@@ -147,4 +233,19 @@
         }
     </script>
 </body>
+<script>
+    function showEditForm(habitId) {
+        // Hide the static display
+        document.getElementById(`display-${habitId}`).style.display = 'none';
+        // Show the edit form
+        document.getElementById(`edit-${habitId}`).style.display = 'block';
+    }
+    
+    function cancelEdit(habitId) {
+        // Show the static display
+        document.getElementById(`display-${habitId}`).style.display = 'block';
+        // Hide the edit form
+        document.getElementById(`edit-${habitId}`).style.display = 'none';
+    }
+    </script>
 </html>

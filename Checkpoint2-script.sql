@@ -20,8 +20,8 @@ CREATE TABLE HabitManager (
     hm_userkey INT NOT NULL, 
     hm_startdate DATE NOT NULL,
     hm_enddate DATE NOT NULL,
-    hm_nonseq BOOLEAN NOT NULL DEFAULT FALSE,
-    hm_recurring BOOLEAN NOT NULL DEFAULT FALSE,
+    --hm_nonseq BOOLEAN NOT NULL DEFAULT FALSE,
+    --hm_recurring BOOLEAN NOT NULL DEFAULT FALSE,
     hm_percentcompleted DECIMAL(5, 2) DEFAULT NULL,
     FOREIGN KEY (hm_userkey) REFERENCES User(u_userkey)
 );

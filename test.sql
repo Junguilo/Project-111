@@ -47,3 +47,16 @@ AND HabitManager.hm_habitid = StudyHabit.sh_habitid
 AND hm_userkey = 1
 AND '2024-12-07' > hm_startdate
 AND '2024-12-07' < hm_enddate ;
+
+
+SELECT hm_habitid, eh_title, eh_description, eh_activitytype, hm_startdate, hm_enddate, eh_durationmin, hm_percentCompleted
+FROM User, HabitManager, ExerciseHabit
+WHERE User.u_userkey = HabitManager.hm_userkey 
+AND HabitManager.hm_habitid = ExerciseHabit.eh_habitid
+AND hm_userkey = 1;
+
+SELECT hm_habitid, sh_title, sh_description, sh_subject, hm_startdate, hm_enddate, sh_durationmin, hm_percentCompleted
+FROM User, HabitManager, StudyHabit
+WHERE User.u_userkey = HabitManager.hm_userkey 
+AND HabitManager.hm_habitid = StudyHabit.sh_habitid
+AND hm_userkey = 1;
